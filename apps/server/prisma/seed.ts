@@ -10,19 +10,27 @@ const prisma = new PrismaClient();
 interface SeedSentence {
   text: string;
   translation: string;
+  mediaUrl?: string;
+  startMs?: number;
+  endMs?: number;
 }
 
-const COURSE_PACKS: Array<{
+interface SeedCourse {
+  title: string;
+  type: string;
+  sentences: SeedSentence[];
+  mediaUrl?: string;
+}
+
+interface SeedPack {
   title: string;
   description: string;
   level: string;
   tags: string[];
-  courses: Array<{
-    title: string;
-    type: string;
-    sentences: SeedSentence[];
-  }>;
-}> = [
+  courses: SeedCourse[];
+}
+
+const COURSE_PACKS: SeedPack[] = [
   {
     title: '日常英语入门',
     description: '围绕日常生活的高频句子，适合零基础与初学者。',
@@ -55,6 +63,17 @@ const COURSE_PACKS: Array<{
           { text: 'Water is fine for me.', translation: '我喝水就好。' },
           { text: 'Do you have vegetarian dishes?', translation: '你们有素食吗？' },
           { text: "I'll take this one.", translation: '我要这个。' },
+        ],
+      },
+      {
+        title: '问候听力',
+        type: 'audio',
+        mediaUrl: '/api/v1/media/audio/',
+        sentences: [
+          { text: 'How have you been lately?', translation: '你最近怎么样？', startMs: 0, endMs: 2400 },
+          { text: "I haven't seen you in a while.", translation: '我好久没见你了。', startMs: 2400, endMs: 4800 },
+          { text: 'We should catch up soon.', translation: '我们应该尽快聚一聚。', startMs: 4800, endMs: 7200 },
+          { text: 'It was great talking to you.', translation: '和你聊天很开心。', startMs: 7200, endMs: 9600 },
         ],
       },
     ],
@@ -91,6 +110,17 @@ const COURSE_PACKS: Array<{
           { text: 'Comparing the two groups is instructive.', translation: '比较两组很有启发。' },
           { text: 'The proportion reached fifty percent.', translation: '比例达到百分之五十。' },
           { text: 'No significant difference was observed.', translation: '未观察到显著差异。' },
+        ],
+      },
+      {
+        title: '英文歌 Follow Your Heart',
+        type: 'music',
+        mediaUrl: '/api/v1/media/audio/',
+        sentences: [
+          { text: 'Follow your heart and you will find the way.', translation: '跟随你的心，你会找到方向。', startMs: 0, endMs: 2600 },
+          { text: 'Every cloud has a silver lining.', translation: '每朵乌云都镶着银边。', startMs: 2600, endMs: 5200 },
+          { text: 'Keep on dreaming, never give up.', translation: '坚持梦想，永不放弃。', startMs: 5200, endMs: 7800 },
+          { text: 'The best is yet to come.', translation: '最好的还在后头。', startMs: 7800, endMs: 10400 },
         ],
       },
     ],
@@ -133,15 +163,24 @@ async function main(): Promise<void> {
       for (let s = 0; s < course.sentences.length; s++) {
         const sent = course.sentences[s]!;
         const tokens = tokenize(sent.text);
-        await prisma.sentence.create({
+        const rec = await prisma.sentence.create({
           data: {
             courseId: courseRec.id,
             order: s,
             text: sent.text,
             translation: sent.translation,
             tokens: JSON.stringify(tokens),
+            startMs: sent.startMs ?? null,
+            endMs: sent.endMs ?? null,
+            mediaUrl: null,
           },
         });
+        if (course.mediaUrl) {
+          await prisma.sentence.update({
+            where: { id: rec.id },
+            data: { mediaUrl: `${course.mediaUrl}${rec.id}` },
+          });
+        }
       }
     }
   }

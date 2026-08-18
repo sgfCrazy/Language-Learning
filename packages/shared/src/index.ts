@@ -5,4 +5,5 @@ export * from './tokenize';
 export * from './scoring';
 export * from './review';
 export * from './ai';
+export * from './speaking';
 export type * from './prisma';

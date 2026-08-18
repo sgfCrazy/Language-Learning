@@ -29,6 +29,21 @@ export interface Recorder {
   stop(): Promise<Blob>;
 }
 
+/** 媒体播放抽象：Web 用 HTML5 Audio/Video，小程序用 createInnerAudioContext。 */
+export interface MediaPlayer {
+  play(url: string, opts?: { startMs?: number; rate?: number }): Promise<void>;
+  pause(): Promise<void>;
+  stop(): Promise<void>;
+  seek(ms: number): Promise<void>;
+  setRate(rate: number): Promise<void>;
+  /** 注册时间更新回调（毫秒）。返回取消函数。 */
+  onTimeUpdate(cb: (currentMs: number) => void): () => void;
+  /** 注册播放结束回调。返回取消函数。 */
+  onEnded(cb: () => void): () => void;
+  /** 返回当前播放进度（毫秒）。 */
+  currentTimeMs(): number;
+}
+
 export interface WxLoginCodeProvider {
   /** 小程序端获取 wx.login 的 code；Web 端实现应抛出 NotSupported。 */
   getCode(): Promise<string>;
@@ -57,6 +72,7 @@ export interface PlatformAdapter {
   sound: SoundPlayer;
   vibration: Vibration;
   recorder: Recorder;
+  media: MediaPlayer;
   wxLogin: WxLoginCodeProvider;
   wxScanLogin: WxScanLogin;
   network: NetworkClient;

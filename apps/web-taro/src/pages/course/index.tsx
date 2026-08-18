@@ -24,8 +24,9 @@ export default function Course() {
     },
   });
 
-  const practice = (courseId: string) => {
-    Taro.navigateTo({ url: `/pages/practice/index?courseId=${courseId}` });
+  const practice = (courseId: string, type?: string) => {
+    const q = type ? `&type=${type}` : '';
+    Taro.navigateTo({ url: `/pages/practice/index?courseId=${courseId}${q}` });
   };
 
   if (isLoading) return <View><Text>加载中…</Text></View>;
@@ -42,9 +43,9 @@ export default function Course() {
       )}
       <View className="courses">
         {data.courses.map((c) => (
-          <View key={c.id} className="row" onClick={() => practice(c.id)}>
+          <View key={c.id} className="row" onClick={() => practice(c.id, c.type)}>
             <Text>{c.title}</Text>
-            <Text className="meta">{c.sentenceCount} 句 · {c.userProgress ?? 0}%</Text>
+            <Text className="meta">{c.sentenceCount} 句 · {c.userProgress ?? 0}% · {c.type}</Text>
           </View>
         ))}
       </View>

@@ -40,3 +40,39 @@ page {
   color: #e64340;
   font-size: 13px;
 }
+
+.mode-bar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  flex-wrap: wrap;
+}
+.mode-bar Button.active {
+  background: #1e9fff;
+  color: #fff;
+}
+.media-ctl {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.hint {
+  display: block;
+  color: #888;
+  font-size: 13px;
+  margin: 4px 0;
+}
+.subtitle {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  color: #333;
+}
+.speech-result {
+  margin: 10px 0;
+  padding: 10px;
+  background: #f0f8ff;
+  border-radius: 8px;
+}

@@ -16,6 +16,18 @@ const OFFLINE_QUEUE_KEY = 'offline_practice_queue';
 
 export interface StoredTokens extends AuthTokens {}
 
+export const API_BASE = (() => {
+  const g = globalThis as { API_BASE?: string };
+  return g.API_BASE ?? 'http://localhost:3000/api/v1';
+})();
+
+/** 将服务端相对媒体 URL（/api/v1/...）解析为绝对地址 */
+export function resolveMediaUrl(url: string | null | undefined): string {
+  if (!url) return '';
+  if (/^https?:\/\//.test(url)) return url;
+  return `${API_BASE}${url}`;
+}
+
 export async function loadTokens(): Promise<StoredTokens | null> {
   return getPlatformAdapter().storage.get<StoredTokens>(TOKEN_KEY);
 }
@@ -146,6 +158,9 @@ export const api = {
   },
   async askAi(body: { question: string; context: { text: string; translation: string; tokens: { text: string; isPunctuation: boolean }[] } }, tokens: StoredTokens | null) {
     return getPlatformAdapter().network.post<{ answer: string; mode: 'free' | 'billed'; billedCoins: number; quota: { freeUsed: number; freeLimit: number; balance: number } }>(`/ai/ask`, body, { headers: authHeaders(tokens) });
+  },
+  async speechScore(body: { sentenceText: string; durationMs: number }, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post<{ score: number; feedback: string }>(`/media/speech-score`, body, { headers: authHeaders(tokens) });
   },
   async heatmap(tokens: StoredTokens | null) {
     return getPlatformAdapter().network.get<{ items: unknown[] }>(`/progress/heatmap`, { headers: authHeaders(tokens) });

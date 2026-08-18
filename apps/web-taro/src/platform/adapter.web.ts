@@ -10,6 +10,7 @@ import type {
   WxQrCodeSession,
 } from '@app/shared';
 import { NotSupportedError as NotSupported } from '@app/shared';
+import { createMediaPlayer } from './media.player';
 
 const storage: Storage = {
   async get<T = unknown>(key: string): Promise<T | null> {
@@ -100,6 +101,7 @@ export function createPlatformAdapter(): PlatformAdapter {
     sound,
     vibration,
     recorder,
+    media: createMediaPlayer(),
     wxLogin,
     wxScanLogin,
     network,

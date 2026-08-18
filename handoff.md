@@ -217,6 +217,27 @@ webpackChain(chain) {
 
 ---
 
+### v0.4.0-ai-assistant — 2026-08-18
+
+**目标**：练习页内嵌 AI 问答助手，自动附句子上下文，解答语法/用法疑问，降低心流中断。
+
+**OpenSpec 提案**：`openspec/changes/ai-assistant/`，已归档为 `2026-08-18-ai-assistant`。
+
+**已落地的能力域**
+| 能力 | 后端 | 前端 | 测试 |
+| --- | --- | --- | --- |
+| ai-assistant | ✅ OpenAI 兼容 LLM 客户端（env 配 GLM，无 key fallback）；AiAskLog 表；每日 2 次免费，超出扣 50 金币（spendCoins 负向流水）；PII 拒绝 | ✅ 练习页 AiAssistantPanel（提问输入、回答展示、剩余额度提示、余额不足提示） | ✅ shared 8 单测 + ai e2e 5 例（server 33/33） |
+
+**注意**：钻石暂以金币记账（无独立钻石账本，见 design D3/D4）；LLM 靠 `LLM_API_KEY` 环境变量，未配置时返回 fallback 文案。
+**关键提交**：`601ce34`（ai-assistant capability）。
+
+**沿途踩坑**（新增）
+- #16 先测"答对一次赚 5 金币，却扣 50"导致 403：测试前先构造足够金币（多次 SSS 练习）。
+- #17 `$transaction` 内调用 `GamificationService.spendCoins`（走同一 prisma 实例，SQLite 事务嵌套/锁冲突超时）：改为先写 AiAskLog 再单独扣款。
+- #18 `AI_LLM_CLIENT` 符号在 module 与 llm.client 重复声明 + service 注入错 token：统一用 `llm.client` 导出的注入标记。
+
+---
+
 ## 待实施的 OpenSpec Changes（设计已就绪，未实现）
 
 | Change | proposal | spec delta | design/tasks | 说明 |
