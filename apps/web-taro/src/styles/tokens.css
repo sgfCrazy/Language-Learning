@@ -1,0 +1,58 @@
+/* ============================================================
+   Language Learning · Design Tokens
+   全局设计令牌：颜色 / 渐变 / 字体 / 间距 / 圆角 / 阴影
+   所有页面样式统一从这里取值，保证风格一致。
+   ============================================================ */
+
+:root {
+  /* 品牌色 */
+  --brand-50: #eef1ff;
+  --brand-100: #dde3ff;
+  --brand-500: #5b6cff;
+  --brand-600: #4a5bf0;
+  --grad-brand: linear-gradient(135deg, #5b6cff 0%, #8b5cf6 100%);
+  --grad-brand-soft: linear-gradient(135deg, rgba(91, 108, 255, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+
+  /* 功能色 */
+  --success: #22c55e;
+  --success-bg: #ecfdf3;
+  --warn: #f59e0b;
+  --warn-bg: #fffbeb;
+  --danger: #f0435a;
+  --danger-bg: #fff1f3;
+  --info: #0ea5e9;
+  --info-bg: #f0f9ff;
+
+  /* 文字层级 */
+  --ink-900: #1e2333;
+  --ink-600: #555f72;
+  --ink-400: #8a94a8;
+  --ink-300: #b3bccd;
+
+  /* 中性面 */
+  --line: #eef0f5;
+  --line-strong: #e2e6ef;
+  --bg: #f5f6fa;
+  --card: #ffffff;
+
+  /* 阴影 */
+  --shadow-sm: 0 2px 10px rgba(30, 35, 51, 0.05);
+  --shadow-md: 0 8px 24px rgba(30, 35, 51, 0.08);
+  --shadow-lg: 0 16px 40px rgba(30, 35, 51, 0.12);
+  --shadow-brand: 0 10px 24px rgba(91, 108, 255, 0.35);
+
+  /* 圆角 */
+  --radius-sm: 10rpx;
+  --radius: 18rpx;
+  --radius-lg: 28rpx;
+  --radius-full: 999rpx;
+
+  /* 字体 */
+  --font-display: 40rpx;
+  --font-title: 32rpx;
+  --font-body: 28rpx;
+  --font-small: 24rpx;
+  --font-tiny: 22rpx;
+  --font-weight-bold: 700;
+  --font-weight-semi: 600;
+}

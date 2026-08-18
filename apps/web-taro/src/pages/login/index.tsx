@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Input, Button } from '@tarojs/components';
+import { View, Text, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAuthStore } from '../../store/auth';
 
@@ -17,7 +17,6 @@ export default function Login() {
       } else {
         await registerEmail(email, password, displayName || `用户${Date.now() % 1000}`);
       }
-      // 成功后返回上一页
       Taro.navigateBack();
     } catch {
       // 错误已写入 store.error
@@ -25,24 +24,52 @@ export default function Login() {
   };
 
   return (
-    <View className="login">
-      <Text>登录</Text>
-      {mode === 'register' && (
-        <Input placeholder="昵称" value={displayName} onInput={(e) => setDisplayName(e.detail.value)} />
+    <View className="page-shell" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh' }}>
+      <View style={{ textAlign: 'center', marginTop: '-100rpx' }}>
+        <Text style={{ fontSize: '64rpx' }}>🎓</Text>
+      </View>
+      <View className="auth-card">
+        <Text className="auth-title">{mode === 'login' ? '欢迎回来' : '创建账号'}</Text>
+        <Text className="auth-sub">{mode === 'login' ? '登录后继续你的学习之旅' : '30 秒开启高效学习'}</Text>
+
+        {mode === 'register' && (
+          <View className="field input-wrap">
+            <Input placeholder="昵称" value={displayName} onInput={(e) => setDisplayName(e.detail.value)} />
+          </View>
+        )}
+        <View className="field input-wrap">
+          <Input placeholder="邮箱" value={email} onInput={(e) => setEmail(e.detail.value)} />
+        </View>
+        <View className="field input-wrap">
+          <Input placeholder="密码" password value={password} onInput={(e) => setPassword(e.detail.value)} />
+        </View>
+
+        <View className="btn btn-primary btn-block" onClick={() => void submit()}>
+          {loading ? '请稍候…' : mode === 'login' ? '登录' : '注册'}
+        </View>
+
+        <View style={{ marginTop: '24rpx', textAlign: 'center' }}>
+          <Text
+            className="muted"
+            style={{ fontSize: 'var(--font-small)' }}
+            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+          >
+            还没有账号？<Text style={{ color: 'var(--brand-600)', fontWeight: 600 }}>{mode === 'login' ? '去注册' : '去登录'}</Text>
+          </Text>
+        </View>
+
+        {/* #ifdef WEAPP */}
+        <View className="btn btn-ghost btn-block" style={{ marginTop: '24rpx' }} onClick={() => loginWxMiniapp()}>
+          微信一键登录
+        </View>
+        {/* #endif */}
+      </View>
+
+      {error && (
+        <View style={{ marginTop: '24rpx', textAlign: 'center' }}>
+          <Text style={{ color: 'var(--danger)', fontSize: 'var(--font-small)' }}>{error}</Text>
+        </View>
       )}
-      <Input placeholder="邮箱" value={email} onInput={(e) => setEmail(e.detail.value)} />
-      <Input placeholder="密码" password value={password} onInput={(e) => setPassword(e.detail.value)} />
-      <Button loading={loading} onClick={submit}>
-        {mode === 'login' ? '登录' : '注册'}
-      </Button>
-      <Button onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
-        切换到{mode === 'login' ? '注册' : '登录'}
-      </Button>
-      {/* 微信小程序端显示微信登录；Web 端的扫码登录在后续接入 */}
-      {/* #ifdef WEAPP */}
-      <Button onClick={() => loginWxMiniapp()}>微信登录</Button>
-      {/* #endif */}
-      {error && <Text className="error">{error}</Text>}
     </View>
   );
 }

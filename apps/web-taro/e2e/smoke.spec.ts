@@ -13,14 +13,14 @@ test('登录 → 商城 → 加入课程 → 练习页加载 → 成长页有数
 
   // 1. 首页 → 去登录
   await page.goto('/');
-  await page.getByText('去登录').click({ timeout: 10_000 });
+  await page.getByText('登录 / 注册').click({ timeout: 10_000 });
 
   // 2. 注册
-  await page.getByText('切换到注册').click();
+  await page.getByText('去注册').click();
   await page.locator('input[placeholder="昵称"]').fill('E2E Tester');
   await page.locator('input[placeholder="邮箱"]').fill(email);
   await page.locator('input[placeholder="密码"]').fill(password);
-  await page.getByText('注册').click();
+  await page.getByText('注册', { exact: true }).click();
   await page.waitForTimeout(2000);
 
   // 3. 首页 → 课程商城

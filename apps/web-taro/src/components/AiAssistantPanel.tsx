@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Button, Input } from '@tarojs/components';
+import { View, Text, Input } from '@tarojs/components';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { AiSentenceContext } from '@app/shared';
 import { api } from '../api/client';
@@ -36,20 +36,28 @@ export default function AiAssistantPanel({ context }: AiAssistantPanelProps) {
 
   return (
     <View className="ai-panel">
-      <Text className="ai-title">AI 助手 · 今日剩余免费 {freeLeft} 次{freeLeft <= 0 ? ` · 超出扣 ${quota?.balance ?? 0} 金币` : ''}</Text>
+      <View className="ai-title">
+        <Text style={{ fontSize: '32rpx' }}>🤖</Text>
+        <Text>AI 学习助手 · 今日剩余免费 {freeLeft} 次</Text>
+        {freeLeft <= 0 && (
+          <Text className={`badge ${(quota?.balance ?? 0) > 0 ? 'badge-warn' : 'badge-danger'}`}>
+            超出扣 {quota?.balance ?? 0} 金币
+          </Text>
+        )}
+      </View>
       <View className="ai-input-row">
         <Input
           placeholder="问问这个句子的用法…"
           value={question}
           onInput={(e) => setQuestion(e.detail.value)}
         />
-        <Button
-          size="mini"
-          disabled={!question.trim() || askMut.isPending}
+        <View
+          className="btn btn-primary"
+          style={{ height: '76rpx', padding: '0 36rpx', fontSize: 'var(--font-small)' }}
           onClick={() => askMut.mutate(question.trim())}
         >
           {askMut.isPending ? '…' : '发送'}
-        </Button>
+        </View>
       </View>
       {askMut.isError && !answer && <Text className="ai-error">发送失败，请重试</Text>}
       {answer ? <Text className="ai-answer">{answer}</Text> : null}

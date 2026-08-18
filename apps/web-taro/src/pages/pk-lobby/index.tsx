@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Button, Input } from '@tarojs/components';
+import { View, Text, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
@@ -65,32 +65,86 @@ export default function PkLobby() {
     },
   });
 
-  if (!tokens) return <View><Text>请先登录</Text></View>;
+  if (!tokens) {
+    return (
+      <View className="page-shell">
+        <View className="center-slot"><View className="empty-icon">🔒</View><Text className="loading-text">请先登录</Text></View>
+      </View>
+    );
+  }
+
   const rooms = (data?.items as PkRoomRow[]) ?? [];
 
   return (
-    <View className="pk-lobby">
-      <Text className="title">对战大厅</Text>
-      <View className="actions">
-        <Button loading={createMut.isPending} onClick={() => createMut.mutate('public')}>创建公开房间</Button>
-        <Button loading={createMut.isPending} onClick={() => createMut.mutate('private')}>创建私密房间</Button>
-        <Button loading={matchMut.isPending} onClick={() => matchMut.mutate()}>随机匹配</Button>
+    <View className="page-shell">
+      <View className="page-header">
+        <Text className="page-title">对战大厅</Text>
+        <Text className="page-sub">邀请好友，一决高下</Text>
       </View>
-      <View className="code-row">
-        <Input placeholder="输入 6 位房间号加入" value={code} onInput={(e) => setCode(e.detail.value)} />
-        <Button size="mini" disabled={code.length !== 6} onClick={() => codeMut.mutate(code)}>加入</Button>
+
+      <View className="pk-action-grid" style={{ marginBottom: '28rpx' }}>
+        <View className="pk-action" onClick={() => createMut.mutate('public')}>
+          <Text className="pk-action-icon">🏠</Text>
+          <Text className="pk-action-label">创建公开房间</Text>
+          <Text className="pk-action-desc">任何人都可加入</Text>
+        </View>
+        <View className="pk-action" onClick={() => createMut.mutate('private')}>
+          <Text className="pk-action-icon">🔒</Text>
+          <Text className="pk-action-label">创建私密房间</Text>
+          <Text className="pk-action-desc">输入房间号加入</Text>
+        </View>
+        <View className="pk-action" onClick={() => matchMut.mutate()}>
+          <Text className="pk-action-icon">⚔️</Text>
+          <Text className="pk-action-label">随机匹配</Text>
+          <Text className="pk-action-desc">匹配实力相当的对手</Text>
+        </View>
+        <View className="pk-action">
+          <Text className="pk-action-icon">🏆</Text>
+          <Text className="pk-action-label">排行榜</Text>
+          <Text className="pk-action-desc">查看对战战绩</Text>
+        </View>
       </View>
-      <View className="rooms">
-        <Text className="section-title">公开房间 ({rooms.length})</Text>
-        {rooms.length === 0 && <Text className="empty">暂无等待中的房间</Text>}
-        {rooms.length === 0 && <Button loading={matchMut.isPending} onClick={() => matchMut.mutate()}>匹配一个对手</Button>}
+
+      <View className="card" style={{ padding: '28rpx', marginBottom: '28rpx' }}>
+        <Text style={{ display: 'block', fontSize: 'var(--font-small)', color: 'var(--ink-400)', marginBottom: '16rpx' }}>加入私密房间</Text>
+        <View style={{ display: 'flex', gap: '16rpx', alignItems: 'center' }}>
+          <View className="input-wrap" style={{ flex: 1, height: '84rpx' }}>
+            <Input placeholder="输入 6 位房间号" maxlength={6} value={code} onInput={(e) => setCode(e.detail.value)} />
+          </View>
+          <View
+            className="btn btn-primary"
+            style={{ height: '84rpx', padding: '0 36rpx', fontSize: 'var(--font-small)', opacity: code.length === 6 ? 1 : 0.5 }}
+            onClick={() => codeMut.mutate(code)}
+          >
+            加入
+          </View>
+        </View>
+      </View>
+
+      <View className="section-title">
+        <Text>公开房间</Text>
+        <Text className="more">{rooms.length} 个等待中</Text>
+      </View>
+
+      {rooms.length === 0 && (
+        <View className="center-slot" style={{ padding: '60rpx 0' }}>
+          <View className="empty-icon">🎮</View>
+          <Text className="loading-text">暂无等待中的房间</Text>
+          <View className="btn btn-primary" style={{ marginTop: '12rpx' }} onClick={() => matchMut.mutate()}>匹配一个对手</View>
+        </View>
+      )}
+
+      <View className="card" style={{ padding: '8rpx 32rpx' }}>
         {rooms.map((r) => (
-          <View key={r.roomId} className="row">
-            <View>
-              <Text>{r.players.map((p) => p.displayName).join(' / ')}</Text>
-              <Text className="meta">{r.questionCount} 题 · {r.status}</Text>
+          <View key={r.roomId} className="list-row">
+            <View className="avatar-brand avatar-sm" style={{ background: r.status === 'ready' ? 'var(--success)' : 'var(--grad-brand)' }}>
+              {r.status === 'ready' ? '⚔' : '⏳'}
             </View>
-            <Button size="mini" onClick={() => joinMut.mutate(r.roomId)}>加入</Button>
+            <View className="grow">
+              <Text className="title">{r.players.map((p) => p.displayName).join(' vs ') || '等待玩家'}</Text>
+              <Text className="meta">{r.questionCount} 题 · {r.status === 'ready' ? '已就绪' : '等待中'}</Text>
+            </View>
+            <View className="btn btn-mini btn-mini-ghost" onClick={() => joinMut.mutate(r.roomId)}>加入</View>
           </View>
         ))}
       </View>

@@ -1,78 +1,400 @@
+@import './styles/tokens.css';
+@import './styles/base.css';
+
+/* ============================================================
+   Language Learning · Global Styles
+   全局唯一入口：设计令牌 + 基础组件 + 跨页通用模块。
+   业务页样式由各页面 index.css 引入，一律复用此处令牌。
+   ============================================================ */
+
 page {
-  background: #f7f7f7;
+  background: var(--bg);
 }
 
+/* ---------- 功能宫格 (首页) ---------- */
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+}
+.nav-grid-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14rpx;
+  padding: 28rpx 8rpx;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s ease;
+}
+.nav-grid-tile:active {
+  transform: scale(0.94);
+}
+.nav-grid-icon {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+.nav-grid-label {
+  font-size: var(--font-tiny);
+  color: var(--ink-600);
+  font-weight: var(--font-weight-semi);
+}
+
+/* ---------- 首页 Hero ---------- */
+.home-hero {
+  border-radius: var(--radius-lg);
+  background: var(--grad-brand);
+  padding: 44rpx 36rpx;
+  color: #fff;
+  box-shadow: var(--shadow-brand);
+  margin-bottom: 28rpx;
+  position: relative;
+  overflow: hidden;
+}
+.home-hero::after {
+  content: '';
+  position: absolute;
+  right: -60rpx;
+  top: -60rpx;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+}
+.home-hero-title {
+  font-size: var(--font-display);
+  font-weight: var(--font-weight-bold);
+}
+.home-hero-sub {
+  margin-top: 10rpx;
+  font-size: var(--font-small);
+  opacity: 0.85;
+}
+.home-hero-badge {
+  display: inline-flex;
+  margin-top: 20rpx;
+  padding: 10rpx 24rpx;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.2);
+  font-size: var(--font-tiny);
+}
+
+/* ---------- 统计卡 (首页/成长) ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24rpx 16rpx;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.stat-num {
+  display: block;
+  font-size: 36rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--ink-900);
+}
+.stat-label {
+  display: block;
+  margin-top: 6rpx;
+  font-size: var(--font-tiny);
+  color: var(--ink-400);
+}
+
+/* ---------- 进度条 ---------- */
+.progress-track {
+  height: 12rpx;
+  border-radius: var(--radius-full);
+  background: var(--line);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--grad-brand);
+  transition: width 0.3s ease;
+}
+
+/* ---------- 排行榜 ---------- */
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx 4rpx;
+}
+.rank-medal {
+  font-size: 32rpx;
+  width: 64rpx;
+  text-align: center;
+  flex-shrink: 0;
+  font-weight: var(--font-weight-bold);
+}
+.rank-medal.gold { color: #f5a623; }
+.rank-medal.silver { color: #b8bfca; }
+.rank-medal.bronze { color: #e0784e; }
+.rank-medal.plain { color: var(--ink-300); font-size: var(--font-body); }
+
+/* ---------- PK 大厅动作 ---------- */
+.pk-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+.pk-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 36rpx 12rpx;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s ease;
+}
+.pk-action:active {
+  transform: scale(0.95);
+}
+.pk-action-icon {
+  font-size: 52rpx;
+}
+.pk-action-label {
+  font-size: var(--font-small);
+  color: var(--ink-900);
+  font-weight: var(--font-weight-semi);
+}
+.pk-action-desc {
+  font-size: var(--font-tiny);
+  color: var(--ink-400);
+}
+
+/* ---------- PK 对战计分板 ---------- */
+.pk-vs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 32rpx;
+  box-shadow: var(--shadow-md);
+}
+.pk-player {
+  text-align: center;
+  flex: 1;
+}
+.pk-player .name {
+  display: block;
+  font-size: var(--font-small);
+  color: var(--ink-600);
+  margin-top: 10rpx;
+}
+.pk-player .score {
+  display: block;
+  font-size: 44rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--ink-900);
+}
+.pk-vs-badge {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: var(--grad-brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  box-shadow: var(--shadow-brand);
+}
+
+/* ---------- 计时 ---------- */
+.pk-timer {
+  text-align: center;
+  margin: 20rpx 0;
+  font-size: var(--font-small);
+  color: var(--warn);
+  font-weight: var(--font-weight-semi);
+}
+
+/* ---------- 词块选择 (练习) ---------- */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+.word-chip {
+  padding: 16rpx 28rpx;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 2rpx solid var(--line-strong);
+  font-size: var(--font-body);
+  color: var(--ink-900);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s ease, border-color 0.1s;
+}
+.word-chip:active {
+  transform: scale(0.94);
+  border-color: var(--brand-500);
+}
+.word-built {
+  min-height: 96rpx;
+  padding: 20rpx 28rpx;
+  border-radius: var(--radius);
+  background: var(--brand-50);
+  color: var(--brand-600);
+  font-size: 34rpx;
+  font-weight: var(--font-weight-semi);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+/* ---------- 句子练习卡 ---------- */
+.practice-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 40rpx 36rpx;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24rpx;
+}
+.sentence-translation {
+  display: block;
+  font-size: 40rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--ink-900);
+  line-height: 1.4;
+}
+.sentence-text {
+  display: block;
+  margin-top: 16rpx;
+  font-size: var(--font-body);
+  color: var(--ink-600);
+  line-height: 1.6;
+}
+
+/* ---------- 表单卡片 (登录) ---------- */
+.auth-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 44rpx 36rpx;
+  box-shadow: var(--shadow-md);
+  margin-top: 40rpx;
+}
+.auth-title {
+  font-size: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  color: var(--ink-900);
+  text-align: center;
+}
+.auth-sub {
+  display: block;
+  text-align: center;
+  margin-top: 12rpx;
+  margin-bottom: 40rpx;
+  font-size: var(--font-small);
+  color: var(--ink-400);
+}
+.field {
+  margin-bottom: 24rpx;
+}
+
+/* ---------- 任务行 ---------- */
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 28rpx 4rpx;
+}
+.task-row + .task-row {
+  border-top: 1rpx solid var(--line);
+}
+.task-row .grow {
+  flex: 1;
+  min-width: 0;
+}
+.task-row .title {
+  font-size: var(--font-body);
+  color: var(--ink-900);
+  font-weight: var(--font-weight-semi);
+}
+.task-row .progress-wrap {
+  margin-top: 14rpx;
+}
+
+/* ---------- AI 助手面板 ---------- */
 .ai-panel {
-  margin: 16px;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
+  margin-top: 28rpx;
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 28rpx 28rpx;
+  box-shadow: var(--shadow-sm);
+  border: 2rpx solid var(--line);
 }
 .ai-title {
-  font-size: 13px;
-  color: #888;
-  display: block;
-  margin-bottom: 8px;
+  font-size: var(--font-small);
+  color: var(--ink-400);
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 20rpx;
 }
 .ai-input-row {
   display: flex;
-  gap: 8px;
+  gap: 16rpx;
   align-items: center;
 }
 .ai-input-row Input {
   flex: 1;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 6px 8px;
-  font-size: 14px;
+  height: 76rpx;
+  padding: 0 24rpx;
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-size: var(--font-small);
 }
 .ai-answer {
   display: block;
-  margin-top: 10px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #333;
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  background: var(--brand-50);
+  border-radius: var(--radius);
+  font-size: var(--font-small);
+  line-height: 1.7;
+  color: var(--ink-900);
 }
 .ai-error {
   display: block;
-  margin-top: 8px;
-  color: #e64340;
-  font-size: 13px;
+  margin-top: 16rpx;
+  color: var(--danger);
+  font-size: var(--font-small);
 }
 
-.mode-bar {
+/* ---------- 复习 / 生词 ---------- */
+.word-card {
   display: flex;
-  gap: 8px;
-  padding: 8px 16px;
-  flex-wrap: wrap;
-}
-.mode-bar Button.active {
-  background: #1e9fff;
-  color: #fff;
-}
-.media-ctl {
-  display: flex;
-  gap: 8px;
-  margin: 8px 0;
   align-items: center;
-  flex-wrap: wrap;
+  gap: 24rpx;
+  padding: 26rpx 4rpx;
 }
-.hint {
-  display: block;
-  color: #888;
-  font-size: 13px;
-  margin: 4px 0;
+.word-card + .word-card {
+  border-top: 1rpx solid var(--line);
 }
-.subtitle {
-  display: block;
-  margin-top: 6px;
-  font-size: 15px;
-  color: #333;
+
+/* ---------- 工具 ---------- */
+.muted {
+  color: var(--ink-400);
 }
-.speech-result {
-  margin: 10px 0;
-  padding: 10px;
-  background: #f0f8ff;
-  border-radius: 8px;
+.spacer {
+  flex: 1;
 }

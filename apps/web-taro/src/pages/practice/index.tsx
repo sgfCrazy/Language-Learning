@@ -36,17 +36,13 @@ export default function Practice() {
     courseType === 'video' ? PracticeMode.VideoWatch : courseType === 'music' ? PracticeMode.Listening : PracticeMode.ZhToEn,
   );
 
-  // 连击系统
   const [combo, setCombo] = useState(0);
   const [maxCombo, setMaxCombo] = useState(0);
 
-  // 听力三阶段：0 盲听 → 1 慢听 → 2 字幕
   const [listenStage, setListenStage] = useState(0);
-  // 口语录音
   const [recording, setRecording] = useState(false);
   const [speech, setSpeech] = useState<{ score: number; feedback: string } | null>(null);
 
-  // 结算反馈
   const [settlement, setSettlement] = useState<{ rating: string; coins: number } | null>(null);
 
   useEffect(() => {
@@ -64,7 +60,6 @@ export default function Practice() {
     return [...remaining].sort((a, b) => (a.id > b.id ? 1 : -1));
   }, [tokensArr, step]);
 
-  // 切句/切模式时清理播放器与阶段状态
   useEffect(() => {
     const media = getPlatformAdapter().media;
     media.pause().catch(() => undefined);
@@ -72,8 +67,20 @@ export default function Practice() {
     setSpeech(null);
   }, [idx, mode]);
 
-  if (isLoading) return <View><Text>加载中…</Text></View>;
-  if (!current) return <View><Text>无内容</Text></View>;
+  if (isLoading) {
+    return (
+      <View className="page-shell">
+        <View className="center-slot"><View className="empty-icon">✏️</View><Text className="loading-text">加载中…</Text></View>
+      </View>
+    );
+  }
+  if (!current) {
+    return (
+      <View className="page-shell">
+        <View className="center-slot"><View className="empty-icon">📭</View><Text className="loading-text">无内容</Text></View>
+      </View>
+    );
+  }
 
   const expected = tokensArr[step];
 
@@ -81,7 +88,6 @@ export default function Practice() {
     getPlatformAdapter().sound.play(name).catch(() => undefined);
   };
 
-  /** 播放当前句媒体（slice 到 endMs 自动暂停） */
   const playCurrent = (rate = 1, startMs?: number) => {
     const url = resolveMediaUrl(current.mediaUrl);
     if (!url) {
@@ -92,7 +98,6 @@ export default function Practice() {
     media.stop().catch(() => undefined);
     void media.play(url, { startMs: startMs ?? current.startMs ?? 0, rate });
     if (current.endMs) {
-      // 播到句末自动暂停
       const off = media.onTimeUpdate((ms) => {
         if (ms >= (current.endMs ?? 0)) {
           off();
@@ -208,17 +213,15 @@ export default function Practice() {
     setWrong(false);
   };
 
-  /** 听力模式推进阶段 */
   const nextListenStage = () => {
     if (listenStage === 0) {
-      playCurrent(0.75); // 慢听
+      playCurrent(0.75);
       setListenStage(1);
     } else if (listenStage === 1) {
-      setListenStage(2); // 看字幕
+      setListenStage(2);
     }
   };
 
-  /** 口语录音并评分 */
   const startRecord = async () => {
     setSpeech(null);
     setRecording(true);
@@ -239,111 +242,127 @@ export default function Practice() {
   };
 
   const modeBar = (
-    <View className="mode-bar">
-      <Button size="mini" className={mode === PracticeMode.ZhToEn ? 'active' : ''} onClick={() => switchMode(PracticeMode.ZhToEn)}>中译英</Button>
-      <Button size="mini" className={mode === PracticeMode.Dictation ? 'active' : ''} onClick={() => switchMode(PracticeMode.Dictation)}>听写</Button>
-      <Button size="mini" className={mode === PracticeMode.Listening ? 'active' : ''} onClick={() => switchMode(PracticeMode.Listening)}>听力</Button>
-      <Button size="mini" className={mode === PracticeMode.Speaking ? 'active' : ''} onClick={() => switchMode(PracticeMode.Speaking)}>口语</Button>
+    <View className="pill-row" style={{ marginBottom: '24rpx' }}>
+      {([
+        [PracticeMode.ZhToEn, '中译英'],
+        [PracticeMode.Dictation, '听写'],
+        [PracticeMode.Listening, '听力'],
+        [PracticeMode.Speaking, '口语'],
+      ] as const).map(([m, label]) => (
+        <Text key={m} className={`pill ${mode === m ? 'active' : ''}`} onClick={() => switchMode(m)}>
+          {label}
+        </Text>
+      ))}
     </View>
   );
 
   return (
-    <View className="practice">
+    <View className="page-shell">
+      <View className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text className="page-title">句子练习</Text>
+        <Text className="badge badge-ink">第 {idx + 1}/{sentences.length} 句</Text>
+      </View>
+
       {modeBar}
-      {/* 连击计数器 */}
+
       {combo >= 2 && (
-        <View className="combo">
-          <Text className="combo-num">{combo}</Text>
-          <Text className="combo-label">{combo >= 10 ? 'PERFECT!' : combo >= 5 ? 'GREAT!' : '连击'}</Text>
-        </View>
-      )}
-      {/* 结算反馈 */}
-      {settlement && (
-        <View className="settlement">
-          <Text className="rating">{settlement.rating} 评级</Text>
-          <Text className="coins">+{settlement.coins} 金币</Text>
-        </View>
-      )}
-
-      {mode === PracticeMode.ZhToEn && (
-        <>
-          <Text className="translation">{current.translation}</Text>
-          <View className="built"><Text>{built}</Text></View>
-          {wrong && <Text className="wrong">再试一次</Text>}
-          <View className="candidates">
-            {candidates.map((t) => (
-              <Button key={t.id} size="mini" onClick={() => onPick(t.text)}>{t.text}</Button>
-            ))}
-          </View>
-        </>
-      )}
-
-      {mode === PracticeMode.Dictation && (
-        <>
-          <Text className="hint">听音频，拼出句子</Text>
-          <View className="media-ctl">
-            <Button size="mini" onClick={() => playCurrent(1)}>播放</Button>
-            <Button size="mini" onClick={() => playCurrent(0.75)}>慢速</Button>
-          </View>
-          <View className="built"><Text>{built}</Text></View>
-          {wrong && <Text className="wrong">再试一次</Text>}
-          <View className="candidates">
-            {candidates.map((t) => (
-              <Button key={t.id} size="mini" onClick={() => onPick(t.text)}>{t.text}</Button>
-            ))}
-          </View>
-        </>
-      )}
-
-      {mode === PracticeMode.Listening && (
-        <>
-          <Text className="hint">
-            {listenStage === 0 ? '第一遍 · 盲听' : listenStage === 1 ? '第二遍 · 慢速' : '第三遍 · 看字幕'}
+        <View style={{ display: 'flex', alignItems: 'center', gap: '14rpx', marginBottom: '20rpx' }}>
+          <Text style={{ fontSize: '40rpx' }}>{combo >= 10 ? '🔥' : combo >= 5 ? '⚡' : '✨'}</Text>
+          <Text style={{ fontSize: 'var(--font-body)', fontWeight: 700, color: 'var(--brand-600)' }}>
+            {combo >= 10 ? 'PERFECT!' : combo >= 5 ? 'GREAT!' : `${combo} 连击`}
           </Text>
-          <View className="media-ctl">
-            {listenStage === 0 && <Button size="mini" onClick={() => playCurrent(1)}>播放</Button>}
-            <Button size="mini" onClick={nextListenStage}>进入{listenStage === 0 ? '慢听' : listenStage === 1 ? '字幕' : '练习'}阶段</Button>
-          </View>
-          {listenStage >= 2 && (
-            <>
-              <Text className="translation">{current.translation}</Text>
-              <Text className="subtitle">{current.text}</Text>
-            </>
-          )}
-          {listenStage >= 2 && (
-            <Button onClick={() => finishSentence(true, 0, combo)}>听懂了，下一句</Button>
-          )}
-        </>
+          <Text className="muted" style={{ fontSize: 'var(--font-tiny)' }}>最高 {maxCombo}</Text>
+        </View>
       )}
 
-      {mode === PracticeMode.Speaking && (
-        <>
-          <Text className="translation">{current.text}</Text>
-          <Text className="subtitle">{current.translation}</Text>
-          {speech && (
-            <View className="speech-result">
-              <Text className="rating">{speech.score} 分</Text>
-              <Text>{speech.feedback}</Text>
+      {settlement && (
+        <View style={{ display: 'flex', alignItems: 'center', gap: '14rpx', marginBottom: '20rpx', padding: '16rpx 24rpx', borderRadius: 'var(--radius)', background: 'var(--success-bg)' }}>
+          <Text style={{ fontSize: '28rpx' }}>🎉</Text>
+          <Text style={{ fontSize: 'var(--font-small)', color: 'var(--success)', fontWeight: 600 }}>{settlement.rating} 评级</Text>
+          <Text style={{ fontSize: 'var(--font-small)', color: 'var(--success)' }}>+{settlement.coins} 金币</Text>
+        </View>
+      )}
+
+      <View className="practice-card">
+        {mode === PracticeMode.ZhToEn && (
+          <>
+            <Text className="sentence-translation">{current.translation}</Text>
+            <View className="word-built" style={{ marginTop: '32rpx' }}><Text>{built}</Text></View>
+            {wrong && <Text style={{ display: 'block', marginTop: '16rpx', color: 'var(--danger)', fontSize: 'var(--font-small)', fontWeight: 600 }}>再试一次</Text>}
+            <View className="chip-row">
+              {candidates.map((t) => (
+                <Button key={t.id} className="word-chip" onClick={() => onPick(t.text)}>{t.text}</Button>
+              ))}
             </View>
-          )}
-          <View className="media-ctl">
-            {!recording ? (
-              <Button onClick={startRecord}>开始录音</Button>
-            ) : (
-              <Button onClick={stopRecord}>停止并评分</Button>
-            )}
-            <Button size="mini" onClick={() => playCurrent(1)}>听原音</Button>
-          </View>
-        </>
-      )}
+          </>
+        )}
 
-      <Button onClick={skip}>跳过</Button>
-      <Button onClick={() => api.addVocab(current.text, tokens).then(() => Taro.showToast({ title: '已加入生词本', icon: 'success' }))}>
-        标记生词
-      </Button>
-      <Text className="meta">
-        第 {idx + 1}/{sentences.length} 句 · 步骤 {step + 1}/{tokensArr.length} · 最高连击 {maxCombo}
-      </Text>
+        {mode === PracticeMode.Dictation && (
+          <>
+            <Text className="sentence-translation" style={{ fontSize: 'var(--font-title)' }}>👂 听音频，拼出句子</Text>
+            <View className="btn-row" style={{ marginTop: '32rpx' }}>
+              <View className="btn btn-ghost" onClick={() => playCurrent(1)}>▶ 播放</View>
+              <View className="btn btn-outline" onClick={() => playCurrent(0.75)}>🐢 慢速</View>
+            </View>
+            <View className="word-built" style={{ marginTop: '28rpx' }}><Text>{built}</Text></View>
+            {wrong && <Text style={{ display: 'block', marginTop: '16rpx', color: 'var(--danger)', fontSize: 'var(--font-small)', fontWeight: 600 }}>再试一次</Text>}
+            <View className="chip-row">
+              {candidates.map((t) => (
+                <Button key={t.id} className="word-chip" onClick={() => onPick(t.text)}>{t.text}</Button>
+              ))}
+            </View>
+          </>
+        )}
+
+        {mode === PracticeMode.Listening && (
+          <>
+            <Text className="sentence-translation" style={{ fontSize: 'var(--font-title)' }}>
+              {listenStage === 0 ? '🔇 第一遍 · 盲听' : listenStage === 1 ? '🐢 第二遍 · 慢速' : '📝 第三遍 · 看字幕'}
+            </Text>
+            <View className="btn-row" style={{ marginTop: '32rpx' }}>
+              {listenStage === 0 && <View className="btn btn-ghost" onClick={() => playCurrent(1)}>▶ 播放</View>}
+              <View className="btn btn-primary" onClick={nextListenStage}>
+                {listenStage === 0 ? '进入慢听' : listenStage === 1 ? '进入字幕' : '听懂了，下一句'}
+              </View>
+            </View>
+            {listenStage >= 2 && (
+              <>
+                <Text className="sentence-translation" style={{ marginTop: '32rpx' }}>{current.translation}</Text>
+                <Text className="sentence-text">{current.text}</Text>
+              </>
+            )}
+          </>
+        )}
+
+        {mode === PracticeMode.Speaking && (
+          <>
+            <Text className="sentence-translation">{current.text}</Text>
+            <Text className="sentence-text">{current.translation}</Text>
+            {speech && (
+              <View style={{ marginTop: '28rpx', padding: '24rpx', borderRadius: 'var(--radius)', background: 'var(--brand-50)' }}>
+                <Text style={{ display: 'block', fontSize: '40rpx', fontWeight: 700, color: 'var(--brand-600)' }}>{speech.score} 分</Text>
+                <Text style={{ display: 'block', marginTop: '8rpx', fontSize: 'var(--font-small)', color: 'var(--ink-600)', lineHeight: 1.6 }}>{speech.feedback}</Text>
+              </View>
+            )}
+            <View className="btn-row" style={{ marginTop: '32rpx' }}>
+              {!recording ? (
+                <View className="btn btn-primary" onClick={() => void startRecord()}>🎙️ 开始录音</View>
+              ) : (
+                <View className="btn btn-danger" onClick={() => void stopRecord()}>⏹ 停止并评分</View>
+              )}
+              <View className="btn btn-ghost" onClick={() => playCurrent(1)}>听原音</View>
+            </View>
+          </>
+        )}
+      </View>
+
+      <View className="btn-row">
+        <View className="btn btn-outline" onClick={skip}>跳过</View>
+        <View className="btn btn-danger" onClick={() => api.addVocab(current.text, tokens).then(() => Taro.showToast({ title: '已加入生词本', icon: 'success' }))}>
+          📒 标记生词
+        </View>
+      </View>
+
       <AiAssistantPanel
         context={{
           text: current.text,
