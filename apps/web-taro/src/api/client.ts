@@ -103,11 +103,10 @@ export const api = {
   async saveProgress(courseId: string, body: { mode: string; sentenceOrder: number; completed: boolean }, tokens: StoredTokens | null) {
     return getPlatformAdapter().network.post(`/courses/${courseId}/progress`, body, { headers: authHeaders(tokens) });
   },
-  async submitPractice(body: PracticeSubmitDto, tokens: StoredTokens | null): Promise<PracticeRecordDto | { queued: true }> {
+  async submitPractice(body: PracticeSubmitDto, tokens: StoredTokens | null): Promise<PracticeRecordDto | { queued: true; coinsEarned?: number; rating?: string }> {
     try {
       return await getPlatformAdapter().network.post<PracticeRecordDto>(`/progress/records`, body, { headers: authHeaders(tokens) });
     } catch {
-      // 离线：入队待补传
       const q = await loadQueue();
       q.push(body);
       await saveQueue(q);
@@ -116,6 +115,15 @@ export const api = {
   },
   async flushOffline(tokens: StoredTokens | null) {
     return flushOfflineQueue(tokens);
+  },
+  async getCoins(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ balance: number; items: unknown[] }>(`/gamification/coins`, { headers: authHeaders(tokens) });
+  },
+  async getDailyTasks(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ items: unknown[] }>(`/gamification/daily-tasks`, { headers: authHeaders(tokens) });
+  },
+  async getLeaderboard(period: string, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ items: unknown[]; myRank: number; myScore: number }>(`/gamification/leaderboard?period=${period}`, { headers: authHeaders(tokens) });
   },
   async heatmap(tokens: StoredTokens | null) {
     return getPlatformAdapter().network.get<{ items: unknown[] }>(`/progress/heatmap`, { headers: authHeaders(tokens) });

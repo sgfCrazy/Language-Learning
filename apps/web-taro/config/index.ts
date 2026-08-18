@@ -2,6 +2,9 @@ import { defineConfig } from '@tarojs/cli';
 import devConfig from './dev';
 import prodConfig from './prod';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type WebpackChain = any;
+
 export default defineConfig(async (merge, { command }) => {
   const base = {
     projectName: 'web-taro',
@@ -34,8 +37,7 @@ export default defineConfig(async (merge, { command }) => {
         autoprefixer: { enable: true },
         cssModules: { enable: false },
       },
-      webpackChain(chain) {
-        // 转译含私有字段的依赖，避免跨 chunk 访问 #field 报错
+      webpackChain(chain: WebpackChain) {
         chain.module.rule('script').include
           .add(/[\\/]node_modules[\\/]@tarojs/)
           .add(/[\\/]node_modules[\\/]@tanstack/)

@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CoursesModule } from './courses/courses.module';
 import { ProgressModule } from './progress/progress.module';
+import { GamificationModule } from './gamification/gamification.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ProgressModule } from './progress/progress.module';
     HealthModule,
     AuthModule,
     CoursesModule,
+    GamificationModule,
     ProgressModule,
   ],
 })

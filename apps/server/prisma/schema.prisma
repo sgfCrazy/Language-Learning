@@ -27,6 +27,8 @@ model User {
   progress    CourseProgress[]
   refreshTokens RefreshToken[]
   vocab       UserVocab[]
+  coins       CoinTransaction[]
+  dailyTasks  DailyTask[]
 
   @@index([email])
 }
@@ -148,6 +150,8 @@ model PracticeRecord {
   durationMs     Int
   attempts       Int
   score          Int
+  maxCombo       Int      @default(0)
+  scoreRate      Float    @default(0)
   clientTimestamp BigInt  // 客户端时间戳（ms），用于离线补传去重
   createdAt      DateTime @default(now())
 
@@ -157,6 +161,38 @@ model PracticeRecord {
   @@unique([userId, sentenceId, clientTimestamp])
   @@index([userId, courseId])
   @@index([sentenceId])
+  @@index([userId, createdAt])
+}
+
+model CoinTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int      // 正数=获得，负数=消费
+  balanceAfter Int
+  source    String   // "practice" | "daily_task" | "daily_bonus"
+  refId     String?  // 关联 PracticeRecord id 或 DailyTask id
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model DailyTask {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String   // YYYY-MM-DD
+  type      String   // "practice_count" | "combo_streak" | "study_duration"
+  target    Int      // 目标值（题数/连击数/分钟数）
+  reward    Int      // 完成奖励金币
+  completed Boolean  @default(false)
+  claimedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, type])
+  @@index([userId, date])
 }
 
 model UserVocab {

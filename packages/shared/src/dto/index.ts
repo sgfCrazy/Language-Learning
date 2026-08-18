@@ -86,6 +86,8 @@ export interface PracticeSubmitDto {
   durationMs: number;
   attempts: number;
   score: number;
+  maxCombo?: number;
+  scoreRate?: number;
   clientTimestamp: number;
 }
 
@@ -139,4 +141,37 @@ export interface WxMiniappLoginDto {
 
 export interface RefreshDto {
   refreshToken: string;
+}
+
+export interface CoinTransactionDto {
+  id: string;
+  amount: number;
+  balanceAfter: number;
+  source: string;
+  refId: string | null;
+  createdAt: string;
+}
+
+export interface DailyTaskDto {
+  id: string;
+  type: string;
+  target: number;
+  reward: number;
+  completed: boolean;
+  progress: number;
+}
+
+export interface LeaderboardEntryDto {
+  rank: number;
+  userId: string;
+  displayName: string;
+  avatarUrl: string | null;
+  score: number;
+}
+
+export interface PracticeSettlementDto {
+  recordId: string;
+  coinsEarned: number;
+  balanceAfter: number;
+  rating: string;
 }

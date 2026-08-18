@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { GamificationService } from '../gamification/gamification.service';
+import { rateByScoreRate } from '@app/shared';
 
 export interface GrowthRow {
   date: string;
@@ -10,7 +12,10 @@ export interface GrowthRow {
 
 @Injectable()
 export class ProgressService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly gamification: GamificationService,
+  ) {}
 
   async submitRecord(
     userId: string,
@@ -22,9 +27,13 @@ export class ProgressService {
       durationMs: number;
       attempts: number;
       score: number;
+      maxCombo?: number;
+      scoreRate?: number;
       clientTimestamp: number;
     },
   ) {
+    const maxCombo = input.maxCombo ?? 0;
+    const scoreRate = input.scoreRate ?? (input.correct ? 1 : 0);
     // 去重：userId+sentenceId+clientTimestamp 唯一约束
     const rec = await this.prisma.practiceRecord.upsert({
       where: {
@@ -43,11 +52,28 @@ export class ProgressService {
         durationMs: input.durationMs,
         attempts: input.attempts,
         score: input.score,
+        maxCombo,
+        scoreRate,
         clientTimestamp: input.clientTimestamp,
       },
       update: {}, // 已存在则不动
     });
-    return { id: rec.id };
+
+    // 发放金币 + 评级（仅新记录）
+    const { coinsEarned, balanceAfter, rating } = await this.gamification.rewardPractice({
+      userId,
+      recordId: rec.id,
+      correct: input.correct,
+      maxCombo,
+      scoreRate,
+    });
+
+    return {
+      id: rec.id,
+      coinsEarned,
+      balanceAfter,
+      rating,
+    };
   }
 
   async heatmap(userId: string, rangeDays = 90): Promise<{ items: GrowthRow[] }> {

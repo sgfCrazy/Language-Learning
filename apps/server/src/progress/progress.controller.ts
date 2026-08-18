@@ -19,6 +19,8 @@ export class ProgressController {
       durationMs: number;
       attempts: number;
       score: number;
+      maxCombo?: number;
+      scoreRate?: number;
       clientTimestamp: number;
     },
   ) {

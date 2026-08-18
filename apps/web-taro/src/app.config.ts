@@ -6,6 +6,8 @@ export default defineAppConfig({
     'pages/course/index',
     'pages/practice/index',
     'pages/growth/index',
+    'pages/tasks/index',
+    'pages/leaderboard/index',
   ],
   window: {
     backgroundTextStyle: 'light',

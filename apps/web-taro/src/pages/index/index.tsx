@@ -26,6 +26,8 @@ export default function Index() {
       )}
       <Button onClick={() => Taro.navigateTo({ url: '/pages/catalog/index' })}>课程商城</Button>
       <Button onClick={() => Taro.navigateTo({ url: '/pages/growth/index' })}>成长记录</Button>
+      <Button onClick={() => Taro.navigateTo({ url: '/pages/tasks/index' })}>每日任务</Button>
+      <Button onClick={() => Taro.navigateTo({ url: '/pages/leaderboard/index' })}>排行榜</Button>
       <Button onClick={() => init()}>初始化会话</Button>
     </View>
   );
