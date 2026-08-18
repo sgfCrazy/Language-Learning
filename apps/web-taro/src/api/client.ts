@@ -125,6 +125,22 @@ export const api = {
   async getLeaderboard(period: string, tokens: StoredTokens | null) {
     return getPlatformAdapter().network.get<{ items: unknown[]; myRank: number; myScore: number }>(`/gamification/leaderboard?period=${period}`, { headers: authHeaders(tokens) });
   },
+  async getTodayReview(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ vocab: unknown[]; sentences: unknown[] }>(`/review/today`, { headers: authHeaders(tokens) });
+  },
+  async listVocab(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ items: unknown[] }>(`/review/vocab`, { headers: authHeaders(tokens) });
+  },
+  async addVocab(word: string, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post(`/review/vocab`, { word }, { headers: authHeaders(tokens) });
+  },
+  async removeVocab(id: string, tokens: StoredTokens | null) {
+    // DELETE 经 network client 不支持，用 post 到一个删除端点
+    return getPlatformAdapter().network.post(`/review/vocab/${id}/delete`, {}, { headers: authHeaders(tokens) });
+  },
+  async markVocabMastered(id: string, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post(`/review/vocab/${id}/master`, {}, { headers: authHeaders(tokens) });
+  },
   async heatmap(tokens: StoredTokens | null) {
     return getPlatformAdapter().network.get<{ items: unknown[] }>(`/progress/heatmap`, { headers: authHeaders(tokens) });
   },

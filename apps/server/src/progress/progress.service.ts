@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
+import { ReviewService } from '../review/review.service';
 import { rateByScoreRate } from '@app/shared';
 
 export interface GrowthRow {
@@ -15,6 +16,7 @@ export class ProgressService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly gamification: GamificationService,
+    private readonly review: ReviewService,
   ) {}
 
   async submitRecord(
@@ -67,6 +69,9 @@ export class ProgressService {
       maxCombo,
       scoreRate,
     });
+
+    // 更新复习调度
+    await this.review.onPracticeAnswered(userId, input.sentenceId, input.correct);
 
     return {
       id: rec.id,

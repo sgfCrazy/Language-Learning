@@ -8,6 +8,8 @@ export default defineAppConfig({
     'pages/growth/index',
     'pages/tasks/index',
     'pages/leaderboard/index',
+    'pages/review/index',
+    'pages/vocab/index',
   ],
   window: {
     backgroundTextStyle: 'light',

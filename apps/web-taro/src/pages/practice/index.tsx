@@ -193,6 +193,9 @@ export default function Practice() {
         ))}
       </View>
       <Button onClick={skip}>跳过</Button>
+      <Button onClick={() => api.addVocab(current.text, tokens).then(() => Taro.showToast({ title: '已加入生词本', icon: 'success' }))}>
+        标记生词
+      </Button>
       <Text className="meta">
         第 {idx + 1}/{sentences.length} 句 · 步骤 {step + 1}/{tokensArr.length} · 最高连击 {maxCombo}
       </Text>

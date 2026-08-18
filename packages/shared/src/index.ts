@@ -3,4 +3,5 @@ export * from './dto/index';
 export * from './platform/index';
 export * from './tokenize';
 export * from './scoring';
+export * from './review';
 export type * from './prisma';
