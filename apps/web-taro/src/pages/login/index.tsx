@@ -26,7 +26,7 @@ export default function Login() {
       } else {
         await registerEmail(normalizedEmail, password, normalizedName || `用户${Date.now() % 1000}`);
       }
-      Taro.navigateBack();
+      Taro.reLaunch({ url: '/pages/index/index' });
     } catch {
       // 错误已写入 store.error
     }
