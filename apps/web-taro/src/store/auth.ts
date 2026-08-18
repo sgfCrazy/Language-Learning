@@ -6,6 +6,7 @@ interface AuthState {
   userId: string | null;
   loading: boolean;
   error: string | null;
+  clearError: () => void;
   init: () => Promise<void>;
   registerEmail: (email: string, password: string, displayName: string) => Promise<void>;
   loginEmail: (email: string, password: string) => Promise<void>;
@@ -18,6 +19,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   userId: null,
   loading: false,
   error: null,
+  clearError() {
+    set({ error: null });
+  },
 
   async init() {
     const stored = await loadTokens();

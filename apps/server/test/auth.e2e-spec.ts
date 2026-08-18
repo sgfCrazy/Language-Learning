@@ -105,8 +105,21 @@ describe('Auth (e2e)', () => {
   it('任意格式账号密码均可注册（无格式校验）', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/auth/register/email')
-      .send({ email: 'user+123 abc@x', password: '123', displayName: 'X' });
+      .send({ email: `user+${Date.now()} abc@x`, password: '123', displayName: 'X' });
     expect(res.status).toBe(201);
     expect(res.body.accessToken).toBeTruthy();
+  });
+
+  it('重复注册返回 409 友好提示而非 500', async () => {
+    const email = `dup-${Date.now()}@x`;
+    const first = await request(app.getHttpServer())
+      .post('/api/v1/auth/register/email')
+      .send({ email, password: '1', displayName: 'D' });
+    expect(first.status).toBe(201);
+    const second = await request(app.getHttpServer())
+      .post('/api/v1/auth/register/email')
+      .send({ email, password: '1', displayName: 'D' });
+    expect(second.status).toBe(409);
+    expect(second.body.message).toContain('该账号已注册');
   });
 });

@@ -4,6 +4,28 @@
    页面只写布局类，业务视觉一律走这里与 tokens。
    ============================================================ */
 
+html,
+body,
+#app {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  color: var(--ink-900);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
 /* ---------- 页面骨架 ---------- */
 .page-shell {
   min-height: 100vh;
@@ -223,6 +245,10 @@
 }
 .input-wrap Input::placeholder {
   color: var(--ink-300);
+}
+.input-wrap input {
+  min-width: 0;
+  width: 100%;
 }
 
 /* ---------- 区块标题 ---------- */

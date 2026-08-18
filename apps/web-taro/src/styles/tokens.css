@@ -6,12 +6,12 @@
 
 :root {
   /* 品牌色 */
-  --brand-50: #eef1ff;
-  --brand-100: #dde3ff;
-  --brand-500: #5b6cff;
-  --brand-600: #4a5bf0;
-  --grad-brand: linear-gradient(135deg, #5b6cff 0%, #8b5cf6 100%);
-  --grad-brand-soft: linear-gradient(135deg, rgba(91, 108, 255, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+  --brand-50: #fff1ec;
+  --brand-100: #ffd8cc;
+  --brand-500: #f26b4d;
+  --brand-600: #d95438;
+  --grad-brand: linear-gradient(135deg, #f26b4d 0%, #f4a340 100%);
+  --grad-brand-soft: linear-gradient(135deg, rgba(242, 107, 77, 0.12) 0%, rgba(244, 163, 64, 0.12) 100%);
 
   /* 功能色 */
   --success: #22c55e;
@@ -32,7 +32,7 @@
   /* 中性面 */
   --line: #eef0f5;
   --line-strong: #e2e6ef;
-  --bg: #f5f6fa;
+  --bg: #f6f7f4;
   --card: #ffffff;
 
   /* 阴影 */

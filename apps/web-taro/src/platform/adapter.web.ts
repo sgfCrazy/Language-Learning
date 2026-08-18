@@ -111,10 +111,20 @@ const wxScanLogin: WxScanLogin = {
   },
 };
 
+function apiErrorMessage(payload: unknown, fallback: string): string {
+  if (!payload || typeof payload !== 'object') return fallback;
+  const value = payload as { message?: string | string[] };
+  if (Array.isArray(value.message)) return value.message.join('；');
+  return value.message || fallback;
+}
+
 const network: NetworkClient = {
   async get(url, opts) {
     const res = await fetch(`${apiBase()}${url}`, { headers: opts?.headers });
-    if (!res.ok) throw new Error(`GET ${url} failed: ${res.status}`);
+    if (!res.ok) {
+      const payload = await res.json().catch(() => null);
+      throw new Error(apiErrorMessage(payload, `请求失败（${res.status}）`));
+    }
     return res.json() as Promise<unknown> as any;
   },
   async post(url, body, opts) {
@@ -123,7 +133,10 @@ const network: NetworkClient = {
       headers: { 'Content-Type': 'application/json', ...(opts?.headers ?? {}) },
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error(`POST ${url} failed: ${res.status}`);
+    if (!res.ok) {
+      const payload = await res.json().catch(() => null);
+      throw new Error(apiErrorMessage(payload, `请求失败（${res.status}）`));
+    }
     return res.json() as Promise<unknown> as any;
   },
 };

@@ -11,6 +11,13 @@ page {
   background: var(--bg);
 }
 
+page,
+taro-page {
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
 /* ---------- 功能宫格 (首页) ---------- */
 .nav-grid {
   display: grid;
@@ -292,11 +299,121 @@ page {
   box-shadow: var(--shadow-md);
   margin-top: 40rpx;
 }
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 48rpx;
+  padding-bottom: 64rpx;
+}
+.auth-layout {
+  width: 100%;
+  max-width: 980px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+  align-items: center;
+  gap: 72px;
+  margin: 0 auto;
+}
+.auth-intro { padding: 32px 0; }
+.auth-mark {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  color: var(--ink-900);
+  font-size: var(--font-body);
+  font-weight: var(--font-weight-bold);
+}
+.auth-mark-icon {
+  display: flex;
+  width: 72rpx;
+  height: 72rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22rpx;
+  background: var(--grad-brand);
+  color: #fff;
+  font-size: 36rpx;
+  box-shadow: var(--shadow-brand);
+}
+.auth-intro-title {
+  display: block;
+  margin-top: 36rpx;
+  max-width: 500px;
+  color: var(--ink-900);
+  font-size: 64rpx;
+  font-weight: 800;
+  line-height: 1.12;
+}
+.auth-intro-copy {
+  display: block;
+  max-width: 430px;
+  margin-top: 24rpx;
+  color: var(--ink-600);
+  font-size: var(--font-body);
+  line-height: 1.8;
+}
+.auth-benefit {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 30rpx;
+  color: var(--ink-600);
+  font-size: var(--font-small);
+}
+.auth-benefit-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--brand-500);
+}
+.auth-card {
+  width: 100%;
+  margin-top: 0;
+  padding: 48rpx;
+}
+.auth-card .input-wrap { margin-bottom: 20rpx; }
+.auth-card .btn { margin-top: 8rpx; }
+.auth-error {
+  display: block;
+  margin-top: 22rpx;
+  padding: 18rpx 20rpx;
+  border-radius: var(--radius-sm);
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: var(--font-small);
+  line-height: 1.5;
+}
+.auth-switch {
+  display: block;
+  margin-top: 28rpx;
+  text-align: center;
+  color: var(--ink-400);
+  font-size: var(--font-small);
+}
+.auth-switch-link { color: var(--brand-600); font-weight: var(--font-weight-semi); }
 .auth-title {
   font-size: var(--font-display);
   font-weight: var(--font-weight-bold);
   color: var(--ink-900);
   text-align: center;
+}
+
+@media (max-width: 900px) {
+  .auth-layout { grid-template-columns: minmax(0, 1fr) minmax(320px, 420px); gap: 40px; }
+  .auth-intro-title { font-size: 52rpx; }
+}
+
+@media (max-width: 700px) {
+  .auth-page { align-items: flex-start; padding-top: 40rpx; }
+  .auth-layout { display: block; max-width: 520px; }
+  .auth-intro { padding: 0 8rpx; text-align: center; }
+  .auth-mark { justify-content: center; }
+  .auth-intro-title { margin: 28rpx auto 0; font-size: 48rpx; }
+  .auth-intro-copy { margin: 18rpx auto 0; font-size: var(--font-small); }
+  .auth-benefit { justify-content: center; margin-top: 18rpx; }
+  .auth-card { margin-top: 36rpx; padding: 40rpx 32rpx; }
 }
 .auth-sub {
   display: block;
@@ -412,14 +529,16 @@ page {
   }
 
   #app {
+    width: 100%;
     max-width: none;
     margin: 0;
     background: var(--bg);
   }
 
   .page-shell {
-    padding: 64px 48px;
-    max-width: 1200px;
+    width: min(100%, 1320px);
+    padding: 48px 56px 80px;
+    max-width: 1320px;
     margin: 0 auto;
   }
 
@@ -462,5 +581,45 @@ page {
     max-width: 1080px;
     margin-left: auto;
     margin-right: auto;
+  }
+}
+
+/* Taro H5 会转换 px 单位，响应式断点使用 rem 保持浏览器实际宽度稳定。 */
+@media (max-width: 48rem) {
+  .page-shell {
+    width: 100%;
+    max-width: none;
+    padding: 28rpx 32rpx 60rpx;
+  }
+  .auth-page {
+    align-items: flex-start;
+    padding-top: 40rpx;
+  }
+  .auth-layout {
+    display: block;
+    max-width: 520px;
+  }
+  .auth-intro {
+    padding: 0 8rpx;
+    text-align: center;
+  }
+  .auth-mark { justify-content: center; }
+  .auth-intro-title {
+    margin: 28rpx auto 0;
+    font-size: 48rpx;
+  }
+  .auth-intro-copy {
+    margin: 18rpx auto 0;
+    font-size: var(--font-small);
+  }
+  .auth-benefit {
+    justify-content: center;
+    margin-top: 18rpx;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 520px;
+    margin: 36rpx auto 0;
+    padding: 40rpx 32rpx;
   }
 }

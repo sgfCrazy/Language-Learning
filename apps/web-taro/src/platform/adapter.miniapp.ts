@@ -109,6 +109,13 @@ const wxScanLogin: WxScanLogin = {
   },
 };
 
+function apiErrorMessage(payload: unknown, fallback: string): string {
+  if (!payload || typeof payload !== 'object') return fallback;
+  const value = payload as { message?: string | string[] };
+  if (Array.isArray(value.message)) return value.message.join('；');
+  return value.message || fallback;
+}
+
 const network: NetworkClient = {
   async get<T>(url: string, opts?: { headers?: Record<string, string> }): Promise<T> {
     const res = await Taro.request({
@@ -116,6 +123,7 @@ const network: NetworkClient = {
       method: 'GET',
       header: opts?.headers ?? {},
     });
+    if (res.statusCode >= 400) throw new Error(apiErrorMessage(res.data, `请求失败（${res.statusCode}）`));
     return res.data as T;
   },
   async post<T>(url: string, body: unknown, opts?: { headers?: Record<string, string> }): Promise<T> {
@@ -125,6 +133,7 @@ const network: NetworkClient = {
       data: body as Record<string, unknown>,
       header: { 'Content-Type': 'application/json', ...(opts?.headers ?? {}) },
     });
+    if (res.statusCode >= 400) throw new Error(apiErrorMessage(res.data, `请求失败（${res.statusCode}）`));
     return res.data as T;
   },
 };

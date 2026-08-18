@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -57,6 +57,10 @@ export class AuthService {
   }
 
   async registerByEmail(email: string, password: string, displayName: string) {
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      throw new ConflictException('该账号已注册，请直接登录');
+    }
     const hash = await this.hashPassword(password);
     const user = await this.prisma.user.create({
       data: {
