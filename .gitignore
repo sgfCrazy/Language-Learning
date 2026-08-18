@@ -32,6 +32,9 @@ miniDist/
 # prisma
 apps/server/prisma/migrations/dev.db*
 
+# swc plugin binaries (downloaded by @swc/core)
+**/.swc/
+
 # test coverage
 coverage/
 

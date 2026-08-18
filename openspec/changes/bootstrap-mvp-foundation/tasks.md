@@ -1,11 +1,11 @@
 ## 1. Monorepo 与工程基础设施
 
-- [ ] 1.1 初始化 pnpm workspaces（`pnpm-workspace.yaml`、根 `package.json`、`.npmrc`、`tsconfig.base.json`、ESLint+Prettier 配置） — shared — 验收：`pnpm install` 成功，`pnpm lint` 通过空仓
-- [ ] 1.2 添加 `packages/shared`（类型/枚举/DTO 导出，含 `PracticeMode`、`Rating`、`AuthClient` 枚举与各 capability 的 DTO） — shared — 验收：`pnpm -F @app/shared build` 产物可被 server/web 引用
-- [ ] 1.3 添加 `packages/shared/platform` 适配层接口定义（`playSound`、`record`、`vibrate`、`storage`、`request`、`getWxLoginCode`） — shared — 验收：接口编译通过，Web 与 Taro 各提供桩实现
-- [ ] 1.4 添加 `apps/server` NestJS 骨架（NestJS + Prisma + config 模块 + 全局异常过滤器 + `/api/v1` 前缀 + 统一错误体） — server — 验收：`pnpm -F @app/server dev` 启动，`GET /api/v1/health` 返回 200
-- [ ] 1.5 添加 `apps/web-taro` Taro 4 工程（React + TS + Tailwind + Zustand + TanStack Query + 平台适配注入） — web/miniapp — 验收：`pnpm -F @app/web-taro dev:h5` 与 `dev:weapp` 均能启动
-- [ ] 1.6 配置 Vitest（shared/web）与 Jest+supertest（server）入口与示例用例 — shared/server/web — 验收：`pnpm test` 全绿
+- [x] 1.1 初始化 pnpm workspaces（`pnpm-workspace.yaml`、根 `package.json`、`.npmrc`、`tsconfig.base.json`、ESLint+Prettier 配置） — shared — 验收：`pnpm install` 成功，`pnpm lint` 通过空仓
+- [x] 1.2 添加 `packages/shared`（类型/枚举/DTO 导出，含 `PracticeMode`、`Rating`、`AuthClient` 枚举与各 capability 的 DTO） — shared — 验收：`pnpm -F @app/shared build` 产物可被 server/web 引用
+- [x] 1.3 添加 `packages/shared/platform` 适配层接口定义（`playSound`、`record`、`vibrate`、`storage`、`request`、`getWxLoginCode`） — shared — 验收：接口编译通过，Web 与 Taro 各提供桩实现
+- [x] 1.4 添加 `apps/server` NestJS 骨架（NestJS + Prisma + config 模块 + 全局异常过滤器 + `/api/v1` 前缀 + 统一错误体） — server — 验收：`pnpm -F @app/server dev` 启动，`GET /api/v1/health` 返回 200
+- [x] 1.5 添加 `apps/web-taro` Taro 4 工程（React + TS + Tailwind + Zustand + TanStack Query + 平台适配注入） — web/miniapp — 验收：`pnpm -F @app/web-taro dev:h5` 与 `dev:weapp` 均能启动
+- [x] 1.6 配置 Vitest（shared/web）与 Jest+supertest（server）入口与示例用例 — shared/server/web — 验收：`pnpm test` 全绿
 
 ## 2. 数据模型与 Prisma（server）
 
