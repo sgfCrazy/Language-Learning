@@ -59,6 +59,10 @@ export default function Practice() {
   const current: SentenceDto | undefined = sentences[idx];
   const tokensArr = current?.tokens ?? [];
   const built = useMemo(() => tokensArr.slice(0, step).map((t) => t.text).join(' '), [tokensArr, step]);
+  const candidates = useMemo(() => {
+    const remaining = tokensArr.filter((_, i) => i >= step);
+    return [...remaining].sort((a, b) => (a.id > b.id ? 1 : -1));
+  }, [tokensArr, step]);
 
   // 切句/切模式时清理播放器与阶段状态
   useEffect(() => {
@@ -72,11 +76,6 @@ export default function Practice() {
   if (!current) return <View><Text>无内容</Text></View>;
 
   const expected = tokensArr[step];
-
-  const candidates = useMemo(() => {
-    const remaining = tokensArr.filter((_, i) => i >= step);
-    return [...remaining].sort((a, b) => (a.id > b.id ? 1 : -1));
-  }, [tokensArr, step]);
 
   const playSound = (name: SoundName) => {
     getPlatformAdapter().sound.play(name).catch(() => undefined);
