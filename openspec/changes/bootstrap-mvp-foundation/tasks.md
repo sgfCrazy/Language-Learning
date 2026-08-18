@@ -15,12 +15,12 @@
 
 ## 3. 用户认证（user-auth）
 
-- [ ] 3.1 `AuthModule`：微信小程序登录端点 `POST /api/v1/auth/wx/miniapp`（code → jscode2session → upsert user → 签 JWT） — server — 验收：supertest 用 mock 微信响应登录成功返回 token
-- [ ] 3.2 微信 Web 扫码登录：`POST /api/v1/auth/wx/qrcode` 生成 ticket、`GET /api/v1/auth/wx/poll?ticket=` 轮询、OAuth 回调 `GET /api/v1/auth/wx/callback` — server — 验收：mock 微信回调后轮询返回 token
-- [ ] 3.3 邮箱注册/登录端点（bcrypt + 统一错误） — server — 验收：错误用例返回"邮箱或密码错误"，不泄露具体项
-- [ ] 3.4 JWT 策略 + Refresh 端点 + 登出吊销（Redis） — server — 验收：过期 access + 有效 refresh 换新；登出后 refresh 失效
-- [ ] 3.5 平台适配层实现：小程序 `getWxLoginCode`、Web 扫码二维码渲染与轮询 — web/miniapp — 验收：两端能各走通对应登录流程并拿到 JWT
-- [ ] 3.6 前端登录页与 auth store（Zustand 持久化 token、自动刷新拦截器） — web/miniapp — 验收：登录后刷新页面仍保持会话
+- [x] 3.1 `AuthModule`：微信小程序登录端点 `POST /api/v1/auth/wx/miniapp`（code → jscode2session → upsert user → 签 JWT） — server — 验收：supertest 用 mock 微信响应登录成功返回 token
+- [x] 3.2 微信 Web 扫码登录：`POST /api/v1/auth/wx/qrcode` 生成 ticket、`GET /api/v1/auth/wx/poll?ticket=` 轮询、OAuth 回调 `GET /api/v1/auth/wx/callback` — server — 验收：mock 微信回调后轮询返回 token
+- [x] 3.3 邮箱注册/登录端点（bcrypt + 统一错误） — server — 验收：错误用例返回"邮箱或密码错误"，不泄露具体项
+- [x] 3.4 JWT 策略 + Refresh 端点 + 登出吊销（Redis） — server — 验收：过期 access + 有效 refresh 换新；登出后 refresh 失效
+- [x] 3.5 平台适配层实现：小程序 `getWxLoginCode`、Web 扫码二维码渲染与轮询 — web/miniapp — 验收：两端能各走通对应登录流程并拿到 JWT
+- [x] 3.6 前端登录页与 auth store（Zustand 持久化 token、自动刷新拦截器） — web/miniapp — 验收：登录后刷新页面仍保持会话
 
 ## 4. 课程目录（course-catalog）
 

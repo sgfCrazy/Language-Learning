@@ -1,4 +1,4 @@
-import { CourseLevel, CourseType, PracticeMode } from '../enum/index.js';
+import { CourseLevel, CourseType, PracticeMode } from '../enum/index';
 
 export interface TokenDto {
   id: string;
@@ -120,4 +120,23 @@ export interface CourseSentenceDetailDto {
   attempts: number;
   score: number;
   lastPracticedAt: string | null;
+}
+
+export interface EmailRegisterDto {
+  email: string;
+  password: string;
+  displayName: string;
+}
+
+export interface EmailLoginDto {
+  email: string;
+  password: string;
+}
+
+export interface WxMiniappLoginDto {
+  code: string;
+}
+
+export interface RefreshDto {
+  refreshToken: string;
 }

@@ -1,5 +1,5 @@
-export * from './enum/index.js';
-export * from './dto/index.js';
-export * from './platform/index.js';
-export * from './tokenize.js';
-export type * from './prisma.js';
+export * from './enum/index';
+export * from './dto/index';
+export * from './platform/index';
+export * from './tokenize';
+export type * from './prisma';
