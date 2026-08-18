@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, Input, Button } from '@tarojs/components';
+import Taro from '@tarojs/taro';
 import { useAuthStore } from '../../store/auth';
 
 export default function Login() {
@@ -16,6 +17,8 @@ export default function Login() {
       } else {
         await registerEmail(email, password, displayName || `用户${Date.now() % 1000}`);
       }
+      // 成功后返回上一页
+      Taro.navigateBack();
     } catch {
       // 错误已写入 store.error
     }

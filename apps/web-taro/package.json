@@ -11,11 +11,14 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "e2e": "playwright test",
-    "e2e:install": "playwright install chromium"
+    "e2e:install": "playwright install chromium",
+    "e2e:setup": "pnpm -F @app/server build && pnpm -F @app/web-taro build:h5"
   },
   "browserslist": [
-    "defaults and fully supports es6-module",
-    "maintained node versions"
+    "Chrome >= 80",
+    "Safari >= 14",
+    "Firefox >= 80",
+    "Edge >= 80"
   ],
   "dependencies": {
     "@app/shared": "workspace:*",
@@ -47,6 +50,7 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "babel-preset-taro": "4.0.9",
+    "http-server": "^14.1.1",
     "react-refresh": "^0.14.2",
     "typescript": "^5.6.2",
     "vitest": "^2.1.1",

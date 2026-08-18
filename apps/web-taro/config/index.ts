@@ -34,6 +34,14 @@ export default defineConfig(async (merge, { command }) => {
         autoprefixer: { enable: true },
         cssModules: { enable: false },
       },
+      webpackChain(chain) {
+        // 转译含私有字段的依赖，避免跨 chunk 访问 #field 报错
+        chain.module.rule('script').include
+          .add(/[\\/]node_modules[\\/]@tarojs/)
+          .add(/[\\/]node_modules[\\/]@tanstack/)
+          .add(/[\\/]node_modules[\\/]react-dom/)
+          .add(/[\\/]node_modules[\\/]zustand/);
+      },
     },
   };
   return merge({}, base, command === 'build' ? prodConfig : devConfig);

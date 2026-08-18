@@ -104,6 +104,34 @@ openspec/           spec-driven 规范（config.yaml + specs/ + changes/）
 **解决**：用 classic token（勾 `repo`），或 fine-grained PAT 单独设 Contents: Read and write。
 **推送姿势**：用一次性 credential helper，不写入 git config 避免泄露 token：`git -c credential.helper='!f() { echo "username=<u>"; echo "password=<token>"; }; f' push -u origin main`。
 
+### 11. Taro H5 构建不生成 index.html
+**症状**：`pnpm build:h5` 后 `dist/` 只有 `js/` 和 `css/`，没有 `index.html`。
+**原因**：Taro 4 H5 需要 HTML 模板文件 `src/index.html`，否则 HtmlWebpackPlugin 无模板。
+**解决**：创建 `apps/web-taro/src/index.html`，内含 `<div id="app"></div>` 和 `<%= htmlWebpackPlugin.options.script %>` 占位符。
+
+### 12. Taro H5 私有字段跨 chunk 报错
+**症状**：Playwright 跑 H5 页面报 `Private field '#e' must be declared in an enclosing class`，页面空白。
+**原因**：webpack 分 chunk 后，依赖包（@tarojs 等）中的 ES2022 私有字段跨 chunk 访问失败。
+**解决**：在 `config/index.ts` 的 `h5.webpackChain` 里把这些依赖加入 `script` rule 的 `include`，强制 babel 转译掉私有字段：
+```ts
+webpackChain(chain) {
+  chain.module.rule('script').include
+    .add(/[\\/]node_modules[\\/]@tarojs/)
+    .add(/[\\/]node_modules[\\/]@tanstack/)
+    .add(/[\\/]node_modules[\\/]react-dom/)
+    .add(/[\\/]node_modules[\\/]zustand/);
+}
+```
+
+### 13. Taro H5 + Playwright 测试注意事项
+**症状**：`getByText('去登录')` 超时找不到；`getByPlaceholder` 匹配到 2 个元素。
+**原因**：
+1. Taro H5 是 SPA，需 `waitForTimeout` 或等特定文本出现后才交互。
+2. Taro 组件渲染为自定义元素：`<taro-button-core>` 不是 `<button>`（`getByRole('button')` 无效）；`<taro-input-core>` 包裹原生 `<input>`（`getByPlaceholder` 匹配到包装层+内层 input 两个）。
+3. Taro H5 **堆叠所有页面在 DOM**（navigateTo 不销毁旧页），`textContent('body')` 拿到全部页面文本；但 `getByText` 默认只匹配可见元素，可安全使用。
+4. `page.goBack()` 在多层 navigateTo 栈里路径不可靠，用 `page.goto('/')` 回首页更稳。
+**解决**：用 `getByText` 替代 `getByRole('button')`；用 `page.locator('input[placeholder="..."]')` 精确选原生 input；用 `page.goto('/')` 重置导航。
+
 ---
 
 ## 迭代日志

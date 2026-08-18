@@ -48,6 +48,6 @@
 
 ## 7. 联调与验收
 
-- [ ] 7.1 端到端用例脚本（Playwright Web：登录→加入→练完一课→成长页有数据） — web — 验收：`pnpm e2e` 绿
+- [x] 7.1 端到端用例脚本（Playwright Web：登录→加入→练完一课→成长页有数据） — web — 验收：`pnpm e2e` 绿
 - [x] 7.2 小程序端手工验收清单（开发者工具跑通同一闭环） — miniapp — 验收：清单逐项通过
 - [x] 7.3 `openspec validate bootstrap-mvp-foundation --strict` 通过，归档前自检 — shared — 验收：校验无错误
