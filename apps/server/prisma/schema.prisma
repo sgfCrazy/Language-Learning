@@ -1,0 +1,179 @@
+// Prisma schema for language-learning platform.
+// 本地 dev 使用 SQLite 以便无外部依赖运行；生产部署请将 provider 改为 "postgresql"。
+// 注意：SQLite 不支持 Prisma enum，故此处用 String + 应用层枚举校验（@app/shared/enum）。
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  displayName String
+  avatarUrl   String?
+  email       String?  @unique
+  passwordHash String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  auths       UserAuth[]
+  memberships UserCoursePack[]
+  records     PracticeRecord[]
+  progress    CourseProgress[]
+  refreshTokens RefreshToken[]
+  vocab       UserVocab[]
+
+  @@index([email])
+}
+
+model UserAuth {
+  id        String   @id @default(cuid())
+  userId    String
+  provider  String   // "wx-miniapp" | "wx-web" | "email"
+  externalId String   // openid / unionid / email
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, externalId])
+  @@index([userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  client    String   // "web" | "miniapp"
+  revokedAt DateTime?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model CoursePack {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  coverUrl    String   @default("")
+  level       String   @default("beginner") // CourseLevel
+  tags        String   @default("") // 逗号分隔
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courses     Course[]
+  memberships UserCoursePack[]
+
+  @@index([level])
+}
+
+model Course {
+  id           String   @id @default(cuid())
+  coursePackId String
+  title        String
+  type         String   @default("text") // CourseType
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  coursePack   CoursePack @relation(fields: [coursePackId], references: [id], onDelete: Cascade)
+  sentences    Sentence[]
+  progress     CourseProgress[]
+
+  @@index([coursePackId])
+}
+
+model Sentence {
+  id         String   @id @default(cuid())
+  courseId   String
+  order      Int
+  text       String
+  translation String
+  mediaUrl   String?
+  startMs    Int?
+  endMs      Int?
+  // 词块序列以 JSON 存储：[{id,text,isPunctuation}]
+  tokens     String
+  createdAt  DateTime @default(now())
+
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  records    PracticeRecord[]
+
+  @@index([courseId])
+}
+
+model UserCoursePack {
+  id           String   @id @default(cuid())
+  userId       String
+  coursePackId String
+  joinedAt     DateTime @default(now())
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coursePack   CoursePack @relation(fields: [coursePackId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, coursePackId])
+  @@index([userId])
+}
+
+model CourseProgress {
+  id            String   @id @default(cuid())
+  userId        String
+  courseId      String
+  mode          String   @default("zh_to_en") // PracticeMode
+  sentenceOrder Int      @default(0)
+  completed     Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+}
+
+model PracticeRecord {
+  id             String   @id @default(cuid())
+  userId         String
+  courseId       String
+  sentenceId     String
+  mode           String   // PracticeMode
+  correct        Boolean
+  durationMs     Int
+  attempts       Int
+  score          Int
+  clientTimestamp Int     // 客户端时间戳（ms），用于离线补传去重
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sentence       Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sentenceId, clientTimestamp])
+  @@index([userId, courseId])
+  @@index([sentenceId])
+}
+
+model UserVocab {
+  id        String   @id @default(cuid())
+  userId    String
+  word      String
+  status    String   @default("unknown") // VocabStatus
+  // 动态间隔复习字段（review-system 使用，本期预留）
+  dueAt     DateTime @default(now())
+  interval  Int      @default(1)
+  ease      Float    @default(2.5)
+  reps      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, word])
+  @@index([userId, status])
+}

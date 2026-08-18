@@ -9,9 +9,9 @@
 
 ## 2. 数据模型与 Prisma（server）
 
-- [ ] 2.1 编写 `schema.prisma`：`User`、`UserAuth`（微信/邮箱）、`CoursePack`、`Course`、`Sentence`、`Token`、`UserCoursePack`、`CourseProgress`、`PracticeRecord`、`RefreshToken` — server — 验收：`prisma migrate dev` 生成迁移，模型覆盖 4 个 capability 所需字段
-- [ ] 2.2 生成 Prisma 类型并导出到 `packages/shared`（`@app/shared/prisma`）供前端复用 — shared/server — 验收：前端可 import 类型且无循环依赖
-- [ ] 2.3 种子数据脚本（2 个课程包 × 各 2 课程 × 各 8 句，含拆解词块） — server — 验收：`pnpm seed` 后商城列表非空
+- [x] 2.1 编写 `schema.prisma`：`User`、`UserAuth`（微信/邮箱）、`CoursePack`、`Course`、`Sentence`、`Token`、`UserCoursePack`、`CourseProgress`、`PracticeRecord`、`RefreshToken` — server — 验收：`prisma migrate dev` 生成迁移，模型覆盖 4 个 capability 所需字段
+- [x] 2.2 生成 Prisma 类型并导出到 `packages/shared`（`@app/shared/prisma`）供前端复用 — shared/server — 验收：前端可 import 类型且无循环依赖
+- [x] 2.3 种子数据脚本（2 个课程包 × 各 2 课程 × 各 8 句，含拆解词块） — server — 验收：`pnpm seed` 后商城列表非空
 
 ## 3. 用户认证（user-auth）
 
@@ -32,7 +32,7 @@
 
 ## 5. 练习引擎（practice-engine）
 
-- [ ] 5.1 拆句工具：将英文句子拆成词块（含标点独立、保留正确顺序） — shared — 验收：单元测试覆盖普通句/标点/缩写
+- [x] 5.1 拆句工具：将英文句子拆成词块（含标点独立、保留正确顺序） — shared — 验收：单元测试覆盖普通句/标点/缩写
 - [ ] 5.2 连词成句拼接组件（累加式片段展示、当前步骤高亮） — web/miniapp — 验收：逐步渲染与 spec PE-002 示例一致
 - [ ] 5.3 输入与判定：Web 键入 + 小程序点选两条交互路径，统一判定逻辑 — web/miniapp — 验收：对错判定两端一致，错误即时标红并计数
 - [ ] 5.4 中译英模式完整流程（中文展示、拼接、跳过标记未掌握） — web/miniapp — 验收：完成/跳过两路径都写入对应状态
