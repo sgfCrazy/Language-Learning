@@ -9,6 +9,7 @@ import { GamificationModule } from './gamification/gamification.module';
 import { ReviewModule } from './review/review.module';
 import { AiAssistantModule } from './ai/ai-assistant.module';
 import { MediaModule } from './media/media.module';
+import { PkModule } from './pk/pk.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MediaModule } from './media/media.module';
     ReviewModule,
     AiAssistantModule,
     MediaModule,
+    PkModule,
     ProgressModule,
   ],
 })

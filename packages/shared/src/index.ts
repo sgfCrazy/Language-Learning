@@ -6,4 +6,5 @@ export * from './scoring';
 export * from './review';
 export * from './ai';
 export * from './speaking';
+export * from './pk';
 export type * from './prisma';

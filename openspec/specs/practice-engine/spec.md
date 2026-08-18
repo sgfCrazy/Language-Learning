@@ -2,7 +2,7 @@
 
 明确练习引擎向复习系统上报答题事件的接口，使复习调度可消费练习结果；并落地听写/听力/口语测评/视频观看四种模式，使媒体课程可用。
 
-## MODIFIED Requirements
+## Requirements
 
 ### Requirement: PE-004 学习模式切换骨架
 
@@ -19,6 +19,10 @@
 #### Scenario: 切换模式保存进度
 - **WHEN** 用户在练习中途切换模式
 - **THEN** 系统 MUST 自动保存当前句子进度与课程位置
+
+#### Scenario: 对战模式单题下发
+- **WHEN** pk-battles 请求一道对战题
+- **THEN** 练习引擎 SHALL 返回单题数据并支持限时判定，不写入常规课程进度
 
 ### Requirement: PE-003 中译英模式
 

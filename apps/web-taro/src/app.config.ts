@@ -10,6 +10,8 @@ export default defineAppConfig({
     'pages/leaderboard/index',
     'pages/review/index',
     'pages/vocab/index',
+    'pages/pk-lobby/index',
+    'pages/pk-battle/index',
   ],
   window: {
     backgroundTextStyle: 'light',

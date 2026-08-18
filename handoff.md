@@ -238,6 +238,28 @@ webpackChain(chain) {
 
 ---
 
+### v0.5.0-media-courses — 2026-08-18
+
+**目标**：音频/视频/音乐课程按句切片播放 + 听写/听力/口语测评落地，拓展真实语料学习场景。
+
+**OpenSpec 提案**：`openspec/changes/media-courses/`，已归档为 `2026-08-18-media-courses`。
+
+**已落地的能力域**
+| 能力 | 后端 | 前端 | 测试 |
+| --- | --- | --- | --- |
+| media-courses | ✅ `GET /media/audio/:id` 服务端合成 WAV（开发期媒体占位）；`POST /media/speech-score` 确定性 0-100 评分（SPEECH_API_KEY 预留）；seed 增加 audio + music 课程（带 mediaUrl/startMs/endMs 分句切片） | ✅ PlatformAdapter 新增 `media` 播放抽象（Web HTML5 / 小程序 innerAudio）；练习页模式切换条 + 听写（播放/慢速/拼句）+ 三阶段听力（盲听→慢听→字幕）+ 口语（录音→评分） | ✅ speaking 4 单测 + media e2e 5 例（server 38/38） |
+| practice-engine | PE-004 四模式可用（模式切换保存进度） | | |
+| course-catalog | CC-001 媒体字段与类型（已存在）| 课程列表显示类型 | |
+
+**注意**：WAV 为开发期占位音（不同句不同音高便于听辨），生产换对象存储/CDN 真实音频，字段结构不变。
+**关键提交**：`caac546`（media-courses capability）。
+**沿途踩坑**（新增）
+- #19 seed 的 mediaUrl 依赖 sentence id：先 create 再按 rec.id update 填充 `/api/v1/media/audio/<id>`。
+- #20 小程序 adapter 的 `Taro.InnerAudioContext` 类型不可用：用 `any` 局部变量绕过 TS18047。
+- #21 相对媒体 URL（`/api/v1/...`）在 H5 Audio 里无法直接播放：前端 `resolveMediaUrl()` 拼上 API_BASE。
+
+---
+
 ## 待实施的 OpenSpec Changes（设计已就绪，未实现）
 
 | Change | proposal | spec delta | design/tasks | 说明 |

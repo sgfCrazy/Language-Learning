@@ -30,6 +30,7 @@ export default function Index() {
       <Button onClick={() => Taro.navigateTo({ url: '/pages/leaderboard/index' })}>排行榜</Button>
       <Button onClick={() => Taro.navigateTo({ url: '/pages/review/index' })}>复习本</Button>
       <Button onClick={() => Taro.navigateTo({ url: '/pages/vocab/index' })}>生词本</Button>
+      <Button onClick={() => Taro.navigateTo({ url: '/pages/pk-lobby/index' })}>对战大厅</Button>
       <Button onClick={() => init()}>初始化会话</Button>
     </View>
   );

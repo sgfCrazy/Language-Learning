@@ -30,6 +30,8 @@ model User {
   coins       CoinTransaction[]
   dailyTasks  DailyTask[]
   aiLogs      AiAskLog[]
+  pkMatchesA  PkMatch[]  @relation("PkPlayerA")
+  pkMatchesB  PkMatch[]  @relation("PkPlayerB")
 
   @@index([email])
 }
@@ -228,4 +230,25 @@ model AiAskLog {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+model PkMatch {
+  id          String   @id @default(cuid())
+  roomId      String   @unique
+  playerAId   String
+  playerBId   String
+  scoreA      Int      @default(0)
+  scoreB      Int      @default(0)
+  correctA    Int      @default(0)
+  correctB    Int      @default(0)
+  winnerId    String?
+  coursePackId String?
+  questionCount Int    @default(5)
+  createdAt   DateTime @default(now())
+
+  playerA     User     @relation("PkPlayerA", fields: [playerAId], references: [id], onDelete: Cascade)
+  playerB     User     @relation("PkPlayerB", fields: [playerBId], references: [id], onDelete: Cascade)
+
+  @@index([playerAId, createdAt])
+  @@index([playerBId, createdAt])
 }

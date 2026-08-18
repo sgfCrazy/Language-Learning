@@ -168,4 +168,25 @@ export const api = {
   async growth(tokens: StoredTokens | null) {
     return getPlatformAdapter().network.get<{ items: unknown[] }>(`/progress/growth`, { headers: authHeaders(tokens) });
   },
+  async pkCreateRoom(body: { mode: 'public' | 'private'; coursePackId?: string; questionCount?: number }, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post<Record<string, unknown>>(`/pk/rooms`, body, { headers: authHeaders(tokens) });
+  },
+  async pkListRooms(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ items: unknown[] }>(`/pk/rooms`, { headers: authHeaders(tokens) });
+  },
+  async pkJoinRoom(id: string, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post<Record<string, unknown>>(`/pk/rooms/${id}/join`, {}, { headers: authHeaders(tokens) });
+  },
+  async pkJoinByCode(code: string, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post<Record<string, unknown>>(`/pk/rooms/code/${code}/join`, {}, { headers: authHeaders(tokens) });
+  },
+  async pkStartMatch(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post<{ queued: boolean; ticketId?: string; room?: Record<string, unknown> }>(`/pk/match`, {}, { headers: authHeaders(tokens) });
+  },
+  async pkGetRoom(id: string, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ roomId: string; code?: string; status: string; players: { userId: string; displayName: string; score: number; correctCount: number }[] }>(`/pk/rooms/${id}`, { headers: authHeaders(tokens) });
+  },
+  async pkLeaderboard(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ items: unknown[] }>(`/pk/leaderboard`, { headers: authHeaders(tokens) });
+  },
 };

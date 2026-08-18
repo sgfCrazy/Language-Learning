@@ -5,6 +5,7 @@ import type {
   SoundPlayer,
   Vibration,
   Recorder,
+  RealtimeClient,
   WxLoginCodeProvider,
   WxScanLogin,
   NetworkClient,
@@ -59,6 +60,46 @@ const wxLogin: WxLoginCodeProvider = {
   },
 };
 
+/** 小程序用 Taro.connectSocket 实现实时通道（统一 JSON 事件协议）。 */
+function createRealtime(): RealtimeClient {
+  let sock: Taro.SocketTask | null = null;
+  const listeners = new Map<string, Set<(d: Record<string, unknown>) => void>>();
+  const dispatch = (raw: string) => {
+    let msg: { event: string; data: Record<string, unknown> };
+    try {
+      msg = JSON.parse(raw) as { event: string; data: Record<string, unknown> };
+    } catch {
+      return;
+    }
+    listeners.get(msg.event)?.forEach((cb) => cb(msg.data));
+  };
+  return {
+    async connect(url: string): Promise<void> {
+      const task = await Taro.connectSocket({ url });
+      sock = task as Taro.SocketTask;
+      await new Promise<void>((resolve, reject) => {
+        task.onOpen(() => resolve());
+        task.onError(() => reject(new Error('ws connect failed')));
+        task.onMessage((res) => dispatch(String(res.data)));
+      });
+    },
+    send(event, data) {
+      sock?.send({ data: JSON.stringify({ event, data }) });
+    },
+    on(event, cb) {
+      const set = listeners.get(event) ?? new Set();
+      set.add(cb);
+      listeners.set(event, set);
+      return () => set.delete(cb);
+    },
+    close() {
+      if (sock) sock.close({});
+      sock = null;
+      listeners.clear();
+    },
+  };
+}
+
 const wxScanLogin: WxScanLogin = {
   async createSession(): Promise<WxQrCodeSession> {
     throw new NotSupportedError('wx scan login is only available on web');
@@ -103,6 +144,7 @@ export function createPlatformAdapter(): PlatformAdapter {
     vibration,
     recorder,
     media: createMediaPlayer(),
+    realtime: createRealtime(),
     wxLogin,
     wxScanLogin,
     network,

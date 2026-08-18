@@ -44,6 +44,14 @@ export interface MediaPlayer {
   currentTimeMs(): number;
 }
 
+/** 实时通道（PK 对战用）：统一 JSON 事件协议，Web 原生 WS / 小程序 Taro.connectSocket。 */
+export interface RealtimeClient {
+  connect(url: string): Promise<void>;
+  send(event: string, data: Record<string, unknown>): void;
+  on(event: string, cb: (data: Record<string, unknown>) => void): () => void;
+  close(): void;
+}
+
 export interface WxLoginCodeProvider {
   /** 小程序端获取 wx.login 的 code；Web 端实现应抛出 NotSupported。 */
   getCode(): Promise<string>;
@@ -73,6 +81,7 @@ export interface PlatformAdapter {
   vibration: Vibration;
   recorder: Recorder;
   media: MediaPlayer;
+  realtime: RealtimeClient;
   wxLogin: WxLoginCodeProvider;
   wxScanLogin: WxScanLogin;
   network: NetworkClient;

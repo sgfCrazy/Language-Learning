@@ -4,6 +4,7 @@ import type {
   SoundPlayer,
   Vibration,
   Recorder,
+  RealtimeClient,
   WxLoginCodeProvider,
   WxScanLogin,
   NetworkClient,
@@ -50,6 +51,46 @@ const recorder: Recorder = {
     return new Blob();
   },
 };
+
+/** Web 用原生 WebSocket 实现实时通道（统一 JSON 事件协议）。 */
+function createRealtime(): RealtimeClient {
+  let ws: WebSocket | null = null;
+  const listeners = new Map<string, Set<(d: Record<string, unknown>) => void>>();
+  const handle = (ev: MessageEvent) => {
+    if (typeof ev.data !== 'string') return;
+    let msg: { event: string; data: Record<string, unknown> };
+    try {
+      msg = JSON.parse(ev.data) as { event: string; data: Record<string, unknown> };
+    } catch {
+      return;
+    }
+    listeners.get(msg.event)?.forEach((cb) => cb(msg.data));
+  };
+  return {
+    connect(url) {
+      return new Promise((resolve, reject) => {
+        ws = new WebSocket(url);
+        ws.onopen = () => resolve();
+        ws.onerror = () => reject(new Error('ws connect failed'));
+        ws.onmessage = handle;
+      });
+    },
+    send(event, data) {
+      ws?.readyState === 1 && ws.send(JSON.stringify({ event, data }));
+    },
+    on(event, cb) {
+      const set = listeners.get(event) ?? new Set();
+      set.add(cb);
+      listeners.set(event, set);
+      return () => set.delete(cb);
+    },
+    close() {
+      ws?.close();
+      ws = null;
+      listeners.clear();
+    },
+  };
+}
 
 const wxLogin: WxLoginCodeProvider = {
   async getCode() {
@@ -102,6 +143,7 @@ export function createPlatformAdapter(): PlatformAdapter {
     vibration,
     recorder,
     media: createMediaPlayer(),
+    realtime: createRealtime(),
     wxLogin,
     wxScanLogin,
     network,
