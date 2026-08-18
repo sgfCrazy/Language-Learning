@@ -260,7 +260,35 @@ webpackChain(chain) {
 
 ---
 
+### v0.6.0-pk-battles — 2026-08-18
+
+**目标**：1v1 实时 PK —— 公开/私密房间、随机匹配、实时答题同步、服务端判定、积分榜。
+
+**OpenSpec 提案**：`openspec/changes/pk-battles/`，已归档为 `2026-08-18-pk-battles`。
+
+**已落地的能力域**
+| 能力 | 后端 | 前端 | 测试 |
+| --- | --- | --- | --- |
+| pk-battles | ✅ PkRoomStore（进程内 Map，房间状态机 + 匹配队列 + 私密 6 位码）；PkService（建房/加入/随机匹配/抽题/答案判定/结算入库）；原生 WebSocket 网关 `/ws/pk`（统一 JSON 事件协议）；PkMatch 战绩表 + 积分榜 | ✅ 大厅页（公开房间列表、创建公开/私密、随机匹配、房间号加入）；对战页（题目候选词、计时、对手实时比分、结果结算） | ✅ pk 5 单测 + pk e2e 5 例（server 43/43） |
+
+**注意（偏离 spec 的决策）**：
+- 实时通道用**原生 WebSocket**（`ws` + `@nestjs/platform-ws` 弃用），因为 Socket.io 协议不与小程序 `Taro.connectSocket` 互通；统一 JSON 协议在 shared 满足 PK-005 意图。落地后移除了 @nestjs/websockets 依赖。
+- **WS 网关是轮询式**：房间状态靠前端 `question/progress/result` 事件驱动，非自动推送超时判定（超时依赖客户端发送 next_question 触发）。
+- **进程内 Map** 房间/匹配队列仅单实例有效，生产需迁 Redis。
+- **WS 连接鉴权**：仅从 query `userId` 关联身份，未验证 token（HTTP 层已校验后进入才可靠；生产需加固）。
+
+**关键提交**：`628d444`（pk-battles capability）。
+**沿途踩坑**（新增）
+- #22 `@nestjs/websockets` 默认驱动要 socket.io，未安装会崩所有 e2e（PackageLoader 报错）：改自建 `WebSocketServer({ server, path })` + `HttpAdapterHost` 拿 http server，完全脱离框架网关。
+- #23 小程序 `Taro.connectSocket` 返回 Promise 而非 SocketTask：需先 `await` 再绑 onMessage。
+- #24 主 spec 用 `## MODIFIED Requirements` 头导致 openspec 校验失败（review-system 遗留）：主 spec 必须用 `## Requirements`。
+- #25 practice-engine 的 pk-battles delta 与 media-courses（已实现全部模式）冲突：只合入"对战单题下发"场景，保留全部模式入口。
+
+---
+
 ## 待实施的 OpenSpec Changes（设计已就绪，未实现）
+
+（全部 6 个 changes 已完成并归档，列表清空）
 
 | Change | proposal | spec delta | design/tasks | 说明 |
 | --- | --- | --- | --- | --- |
