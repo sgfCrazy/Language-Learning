@@ -60,34 +60,38 @@ export default function Review() {
       )}
 
       {sentences.length > 0 && (
-        <View className="card" style={{ padding: '8rpx 32rpx' }}>
-          <View className="section-title" style={{ marginTop: '12rpx' }}><Text>待复习句子</Text><Text className="more">{sentences.length} 句</Text></View>
-          {sentences.map((s) => (
-            <View key={s.sentenceId} className="list-row" onClick={() => Taro.navigateTo({ url: `/pages/practice/index?courseId=${s.courseId}` })}>
-              <View className="avatar-brand avatar-sm" style={{ background: 'var(--grad-brand-soft)', color: 'var(--brand-600)' }}>✏️</View>
-              <View className="grow">
-                <Text className="title">{s.translation}</Text>
-                <Text className="meta">{s.text}</Text>
+        <View className="grid-list">
+          <View className="card grid-item" style={{ padding: '8rpx 32rpx' }}>
+            <View className="section-title" style={{ marginTop: '12rpx' }}><Text>待复习句子</Text><Text className="more">{sentences.length} 句</Text></View>
+            {sentences.map((s) => (
+              <View key={s.sentenceId} className="list-row" onClick={() => Taro.navigateTo({ url: `/pages/practice/index?courseId=${s.courseId}` })}>
+                <View className="avatar-brand avatar-sm" style={{ background: 'var(--grad-brand-soft)', color: 'var(--brand-600)' }}>✏️</View>
+                <View className="grow">
+                  <Text className="title">{s.translation}</Text>
+                  <Text className="meta">{s.text}</Text>
+                </View>
+                <Text style={{ fontSize: '32rpx', color: 'var(--ink-300)' }}>›</Text>
               </View>
-              <Text style={{ fontSize: '32rpx', color: 'var(--ink-300)' }}>›</Text>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
       )}
 
       {vocab.length > 0 && (
-        <View className="card" style={{ padding: '8rpx 32rpx' }}>
-          <View className="section-title" style={{ marginTop: '12rpx' }}><Text>待复习生词</Text><Text className="more">{vocab.length} 个</Text></View>
-          {vocab.map((v) => (
-            <View key={v.id} className="word-card">
-              <View className="avatar-brand avatar-sm" style={{ background: 'var(--grad-brand-soft)', color: 'var(--brand-600)' }}>📒</View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ display: 'block', fontSize: 'var(--font-body)', fontWeight: 600, color: 'var(--ink-900)' }}>{v.word}</Text>
-                <Text className="muted" style={{ display: 'block', marginTop: '6rpx', fontSize: 'var(--font-tiny)' }}>{v.status}</Text>
+        <View className="grid-list">
+          <View className="card grid-item" style={{ padding: '8rpx 32rpx' }}>
+            <View className="section-title" style={{ marginTop: '12rpx' }}><Text>待复习生词</Text><Text className="more">{vocab.length} 个</Text></View>
+            {vocab.map((v) => (
+              <View key={v.id} className="word-card">
+                <View className="avatar-brand avatar-sm" style={{ background: 'var(--grad-brand-soft)', color: 'var(--brand-600)' }}>📒</View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ display: 'block', fontSize: 'var(--font-body)', fontWeight: 600, color: 'var(--ink-900)' }}>{v.word}</Text>
+                  <Text className="muted" style={{ display: 'block', marginTop: '6rpx', fontSize: 'var(--font-tiny)' }}>{v.status}</Text>
+                </View>
+                <View className="btn btn-mini btn-mini-success" onClick={() => api.markVocabMastered(v.id, tokens)}>✓ 掌握</View>
               </View>
-              <View className="btn btn-mini btn-mini-success" onClick={() => api.markVocabMastered(v.id, tokens)}>✓ 掌握</View>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
       )}
     </View>

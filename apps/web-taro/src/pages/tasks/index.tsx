@@ -64,30 +64,32 @@ export default function Tasks() {
         </View>
       )}
 
-      <View className="card" style={{ padding: '8rpx 32rpx' }}>
+      <View className="grid-list">
         {tasks.map((t) => {
           const pct = Math.min(100, Math.round((t.progress / t.target) * 100));
           return (
-            <View key={t.id} className="task-row">
-              <View className="avatar-brand avatar-sm" style={{ background: t.completed ? 'var(--success)' : 'var(--grad-brand)' }}>
-                {t.completed ? '✓' : '·'}
-              </View>
-              <View className="grow">
-                <View style={{ display: 'flex', alignItems: 'center', gap: '12rpx' }}>
-                  <Text className="title">{TASK_LABELS[t.type] ?? t.type}</Text>
-                  <Text className={`badge ${t.completed ? 'badge-success' : 'badge-warn'}`}>{t.completed ? '已完成' : '进行中'}</Text>
+            <View key={t.id} className="card grid-item" style={{ padding: '28rpx' }}>
+              <View style={{ display: 'flex', alignItems: 'flex-start', gap: '20rpx' }}>
+                <View className="avatar-brand avatar-sm" style={{ background: t.completed ? 'var(--success)' : 'var(--grad-brand)' }}>
+                  {t.completed ? '✓' : '·'}
                 </View>
-                <View className="progress-wrap">
-                  <View className="progress-track">
-                    <View className="progress-fill" style={{ width: `${pct}%` }} />
+                <View className="grow">
+                  <View style={{ display: 'flex', alignItems: 'center', gap: '12rpx' }}>
+                    <Text className="title">{TASK_LABELS[t.type] ?? t.type}</Text>
+                    <Text className={`badge ${t.completed ? 'badge-success' : 'badge-warn'}`}>{t.completed ? '已完成' : '进行中'}</Text>
+                  </View>
+                  <View className="progress-wrap" style={{ marginTop: '16rpx' }}>
+                    <View className="progress-track">
+                      <View className="progress-fill" style={{ width: `${pct}%` }} />
+                    </View>
                   </View>
                 </View>
-              </View>
-              <View style={{ textAlign: 'right' }}>
-                <Text style={{ display: 'block', fontSize: 'var(--font-small)', fontWeight: 600, color: t.completed ? 'var(--success)' : 'var(--ink-900)' }}>
-                  {t.progress}/{t.target}
-                </Text>
-                <Text style={{ display: 'block', marginTop: '8rpx', fontSize: 'var(--font-tiny)', color: 'var(--warn)' }}>🪙 +{t.reward}</Text>
+                <View style={{ textAlign: 'right' }}>
+                  <Text style={{ display: 'block', fontSize: 'var(--font-small)', fontWeight: 600, color: t.completed ? 'var(--success)' : 'var(--ink-900)' }}>
+                    {t.progress}/{t.target}
+                  </Text>
+                  <Text style={{ display: 'block', marginTop: '8rpx', fontSize: 'var(--font-tiny)', color: 'var(--warn)' }}>🪙 +{t.reward}</Text>
+                </View>
               </View>
             </View>
           );

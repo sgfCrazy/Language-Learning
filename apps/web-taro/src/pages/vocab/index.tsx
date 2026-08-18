@@ -79,22 +79,24 @@ export default function Vocab() {
         </View>
       )}
 
-      <View className="card" style={{ padding: '8rpx 32rpx' }}>
+      <View className="grid-list">
         {items.map((v) => (
-          <View key={v.id} className="word-card">
-            <View className="avatar-brand avatar-sm" style={{ background: v.status === 'mastered' ? 'var(--success)' : 'var(--grad-brand)' }}>
-              {v.word.slice(0, 1).toUpperCase()}
+          <View key={v.id} className="card grid-item" style={{ padding: '24rpx 28rpx' }}>
+            <View style={{ display: 'flex', alignItems: 'center', gap: '20rpx' }}>
+              <View className="avatar-brand avatar-sm" style={{ background: v.status === 'mastered' ? 'var(--success)' : 'var(--grad-brand)' }}>
+                {v.word.slice(0, 1).toUpperCase()}
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ display: 'block', fontSize: 'var(--font-body)', fontWeight: 700, color: 'var(--ink-900)' }}>{v.word}</Text>
+                <Text className={`badge ${STATUS_META[v.status]?.badge ?? 'badge-ink'}`} style={{ marginTop: '8rpx' }}>
+                  {STATUS_META[v.status]?.label ?? v.status}
+                </Text>
+              </View>
+              {v.status !== 'mastered' && (
+                <View className="btn btn-mini btn-mini-success" onClick={() => masterMut.mutate(v.id)}>✓ 掌握</View>
+              )}
+              <View className="btn btn-mini btn-mini-danger" onClick={() => removeMut.mutate(v.id)}>删除</View>
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ display: 'block', fontSize: 'var(--font-body)', fontWeight: 700, color: 'var(--ink-900)' }}>{v.word}</Text>
-              <Text className={`badge ${STATUS_META[v.status]?.badge ?? 'badge-ink'}`} style={{ marginTop: '8rpx' }}>
-                {STATUS_META[v.status]?.label ?? v.status}
-              </Text>
-            </View>
-            {v.status !== 'mastered' && (
-              <View className="btn btn-mini btn-mini-success" onClick={() => masterMut.mutate(v.id)}>✓ 掌握</View>
-            )}
-            <View className="btn btn-mini btn-mini-danger" onClick={() => removeMut.mutate(v.id)}>删除</View>
           </View>
         ))}
       </View>

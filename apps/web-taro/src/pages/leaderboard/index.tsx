@@ -95,15 +95,17 @@ export default function Leaderboard() {
         <View className="center-slot"><View className="empty-icon">🏆</View><Text className="loading-text">暂无排名数据</Text></View>
       )}
 
-      <View className="card" style={{ padding: '8rpx 32rpx' }}>
+      <View className="grid-list">
         {rows.slice(3).map((entry) => (
-          <View key={entry.rank} className="rank-row">
-            <Text className="rank-medal plain">#{entry.rank}</Text>
-            <View className="avatar-brand avatar-sm">{entry.displayName.slice(0, 1)}</View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ display: 'block', fontSize: 'var(--font-body)', fontWeight: 600, color: 'var(--ink-900)' }}>{entry.displayName}</Text>
+          <View key={entry.rank} className="card grid-item" style={{ padding: '20rpx 24rpx' }}>
+            <View className="rank-row">
+              <Text className="rank-medal plain">#{entry.rank}</Text>
+              <View className="avatar-brand avatar-sm">{entry.displayName.slice(0, 1)}</View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ display: 'block', fontSize: 'var(--font-body)', fontWeight: 600, color: 'var(--ink-900)' }}>{entry.displayName}</Text>
+              </View>
+              <Text style={{ fontSize: 'var(--font-body)', fontWeight: 700, color: 'var(--warn)' }}>{entry.score}</Text>
             </View>
-            <Text style={{ fontSize: 'var(--font-body)', fontWeight: 700, color: 'var(--warn)' }}>{entry.score}</Text>
           </View>
         ))}
       </View>

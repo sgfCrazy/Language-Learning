@@ -80,16 +80,18 @@ export default function Course() {
         <Text className="more">{data.courses.length} 门课程</Text>
       </View>
 
-      <View className="card" style={{ padding: '8rpx 32rpx' }}>
+      <View className="grid-list">
         {data.courses.map((c, i) => (
-          <View key={c.id} className="list-row" onClick={() => practice(c.id, c.type)}>
-            <View className="avatar-brand avatar-sm">{i + 1}</View>
-            <View className="grow">
-              <Text className="title">{c.title}</Text>
-              <Text className="meta">{c.sentenceCount} 句 · 已学 {c.userProgress ?? 0}%</Text>
+          <View key={c.id} className="card grid-item" style={{ padding: '24rpx 32rpx' }} onClick={() => practice(c.id, c.type)}>
+            <View style={{ display: 'flex', alignItems: 'center', gap: '24rpx' }}>
+              <View className="avatar-brand avatar-sm">{i + 1}</View>
+              <View className="grow">
+                <Text className="title">{c.title}</Text>
+                <Text className="meta">{c.sentenceCount} 句 · 已学 {c.userProgress ?? 0}%</Text>
+              </View>
+              <Text className={`badge ${TYPE_META[c.type]?.badge ?? 'badge-ink'}`}>{TYPE_META[c.type]?.label ?? c.type}</Text>
+              <Text style={{ fontSize: '28rpx', color: 'var(--ink-300)' }}>›</Text>
             </View>
-            <Text className={`badge ${TYPE_META[c.type]?.badge ?? 'badge-ink'}`}>{TYPE_META[c.type]?.label ?? c.type}</Text>
-            <Text style={{ fontSize: '28rpx', color: 'var(--ink-300)' }}>›</Text>
           </View>
         ))}
       </View>

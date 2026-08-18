@@ -60,24 +60,26 @@ export default function Catalog() {
         </View>
       )}
 
-      {data?.items.map((p) => (
-        <View key={p.id} className="card card-press" onClick={() => goDetail(p.id)}>
-          <View style={{ display: 'flex', alignItems: 'center', gap: '24rpx' }}>
-            <View className="avatar-brand">{p.title.slice(0, 1)}</View>
-            <View style={{ flex: 1, minWidth: 0 }}>
-              <Text style={{ display: 'block', fontSize: 'var(--font-title)', fontWeight: 700, color: 'var(--ink-900)' }}>{p.title}</Text>
-              <Text className="muted" style={{ display: 'block', marginTop: '10rpx', fontSize: 'var(--font-small)', lineHeight: 1.5 }}>{p.description}</Text>
-              <View style={{ display: 'flex', gap: '12rpx', marginTop: '16rpx', alignItems: 'center' }}>
-                <Text className={`badge ${LEVEL_META[p.level]?.badge ?? 'badge-ink'}`}>{LEVEL_META[p.level]?.label ?? p.level}</Text>
-                {p.tags.map((t) => (
-                  <Text key={t} className="badge badge-ink">{t}</Text>
-                ))}
+      <View className="grid-list grid-list-hover">
+        {data?.items.map((p) => (
+          <View key={p.id} className="card card-press grid-item" onClick={() => goDetail(p.id)}>
+            <View style={{ display: 'flex', alignItems: 'center', gap: '24rpx' }}>
+              <View className="avatar-brand">{p.title.slice(0, 1)}</View>
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Text style={{ display: 'block', fontSize: 'var(--font-title)', fontWeight: 700, color: 'var(--ink-900)' }}>{p.title}</Text>
+                <Text className="muted" style={{ display: 'block', marginTop: '10rpx', fontSize: 'var(--font-small)', lineHeight: 1.5 }}>{p.description}</Text>
+                <View style={{ display: 'flex', gap: '12rpx', marginTop: '16rpx', alignItems: 'center' }}>
+                  <Text className={`badge ${LEVEL_META[p.level]?.badge ?? 'badge-ink'}`}>{LEVEL_META[p.level]?.label ?? p.level}</Text>
+                  {p.tags.map((t) => (
+                    <Text key={t} className="badge badge-ink">{t}</Text>
+                  ))}
+                </View>
               </View>
+              <Text style={{ fontSize: '32rpx', color: 'var(--ink-300)' }}>›</Text>
             </View>
-            <Text style={{ fontSize: '32rpx', color: 'var(--ink-300)' }}>›</Text>
           </View>
-        </View>
-      ))}
+        ))}
+      </View>
     </View>
   );
 }

@@ -134,17 +134,19 @@ export default function PkLobby() {
         </View>
       )}
 
-      <View className="card" style={{ padding: '8rpx 32rpx' }}>
+      <View className="grid-list">
         {rooms.map((r) => (
-          <View key={r.roomId} className="list-row">
-            <View className="avatar-brand avatar-sm" style={{ background: r.status === 'ready' ? 'var(--success)' : 'var(--grad-brand)' }}>
-              {r.status === 'ready' ? '⚔' : '⏳'}
+          <View key={r.roomId} className="card grid-item" style={{ padding: '24rpx 28rpx' }} onClick={() => joinMut.mutate(r.roomId)}>
+            <View style={{ display: 'flex', alignItems: 'center', gap: '20rpx' }}>
+              <View className="avatar-brand avatar-sm" style={{ background: r.status === 'ready' ? 'var(--success)' : 'var(--grad-brand)' }}>
+                {r.status === 'ready' ? '⚔' : '⏳'}
+              </View>
+              <View className="grow">
+                <Text className="title">{r.players.map((p) => p.displayName).join(' vs ') || '等待玩家'}</Text>
+                <Text className="meta">{r.questionCount} 题 · {r.status === 'ready' ? '已就绪' : '等待中'}</Text>
+              </View>
+              <View className="btn btn-mini btn-mini-ghost">加入</View>
             </View>
-            <View className="grow">
-              <Text className="title">{r.players.map((p) => p.displayName).join(' vs ') || '等待玩家'}</Text>
-              <Text className="meta">{r.questionCount} 题 · {r.status === 'ready' ? '已就绪' : '等待中'}</Text>
-            </View>
-            <View className="btn btn-mini btn-mini-ghost" onClick={() => joinMut.mutate(r.roomId)}>加入</View>
           </View>
         ))}
       </View>

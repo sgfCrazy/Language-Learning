@@ -398,3 +398,69 @@ page {
 .spacer {
   flex: 1;
 }
+
+/* ============================================================
+   PC / 平板宽屏适配
+   移动端优先：≤768px 保留全宽单列。宽屏时内容区自动多列铺开，
+   充分利用视口宽度；Taro 根字号在 ≥768px 恒为 40px，故宽屏下
+   rem 尺寸即桌面舒适字号，无需额外缩放。
+   ============================================================ */
+@media (min-width: 769px) {
+  html,
+  body {
+    background: var(--bg);
+  }
+
+  #app {
+    max-width: none;
+    margin: 0;
+    background: var(--bg);
+  }
+
+  .page-shell {
+    padding: 64px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* 首页宫格：宽屏 4 列起步 */
+  .nav-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .nav-grid-tile {
+    padding: 28rpx 8rpx;
+  }
+
+  /* 统计卡：宽屏拉平为 3 列等比 */
+  .stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* 双栏卡列表 */
+  .grid-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .grid-list .card {
+    margin-bottom: 0;
+  }
+
+  /* PK 对阵/词块保持居中聚集，避免被拉扁 */
+  .chip-row {
+    max-width: 720px;
+  }
+
+  /* 表单/练习类卡片在宽屏不宜过宽，居中聚集 */
+  .auth-card,
+  .practice-card {
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .home-hero {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
