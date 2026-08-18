@@ -2,25 +2,24 @@
 
 "句乐部"风格的英语学习平台：核心玩法是「连词成句」——看中文/听音频，把英文句子一步步拼出来，
 过程中单词自然重复从而记住。游戏化（连击/SSS 评级/PK/排行榜）为核心体验。
-同时覆盖 **Web** 与 **微信小程序**，并支持音视频/音乐课程的跟读与跟拼。
+支持音视频/音乐课程的跟读与跟拼。
 
 ## 技术栈
 
-- **跨端前端**：Taro 4 (React 18 + TypeScript) → 一套代码编译 Web/H5 + 微信小程序
-- **后端**：NestJS + Prisma + PostgreSQL + Redis + Socket.io
+- **前端**：React 18 + TypeScript + Vite + MUI
+- **后端**：NestJS + Prisma + SQLite（本地）/ PostgreSQL（生产）+ Redis
 - **AI**：外部 LLM API（OpenAI / 智谱 GLM）
 - **存储**：对象存储（OSS/COS）放音视频
-- **认证**：微信登录为主，邮箱密码为辅，JWT
+- **认证**：邮箱密码为主，JWT
 - **工程**：pnpm workspaces monorepo
 
 ## 目录
 
 ```
-apps/web-taro      跨端应用（Web/H5 + 微信小程序）
-apps/server        NestJS 后端
-packages/shared    共享类型 / 平台适配层接口
-packages/ui        共享组件
-openspec/          spec-driven 开发规范（specs + changes）
+apps/web-react      Web 前端（React + MUI + Vite，SPA）
+apps/server         NestJS 后端
+packages/shared     共享类型 / 平台适配层接口
+openspec/           spec-driven 开发规范（specs + changes）
 ```
 
 ## 项目管理：OpenSpec
@@ -67,4 +66,4 @@ OpenCode 内可用 `/opsx-propose`、`/opsx-apply`、`/opsx-archive`、`/opsx-sy
 - Conventional Commits（feat/fix/docs/refactor/test/chore）
 - ESLint + Prettier，TypeScript strict
 - 测试：后端 Jest + supertest；前端 Vitest；E2E Playwright（Web）
-- 多端：业务代码禁止直调浏览器/小程序专有 API，一律走 `packages/shared/platform` 适配层
+- 前端须走 `packages/shared/platform` 适配层访问平台能力（禁止直调浏览器 API 做副作用）

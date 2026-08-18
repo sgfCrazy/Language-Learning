@@ -4,6 +4,7 @@ import { getPlatformAdapter } from '@app/shared';
 import { useAuthStore } from '../../store/auth';
 
 const NAV = [
+  { label: '导入影视 / 歌曲', icon: '＋', tint: '#f26b4d', url: '/pages/import/index' },
   { label: '课程商城', icon: '🛍️', tint: '#5b6cff', url: '/pages/catalog/index' },
   { label: '每日任务', icon: '🎯', tint: '#22c55e', url: '/pages/tasks/index' },
   { label: '排行榜', icon: '🏆', tint: '#f59e0b', url: '/pages/leaderboard/index' },
@@ -11,7 +12,7 @@ const NAV = [
   { label: '生词本', icon: '📒', tint: '#8b5cf6', url: '/pages/vocab/index' },
   { label: '成长记录', icon: '📈', tint: '#ec4899', url: '/pages/growth/index' },
   { label: '对战大厅', icon: '⚔️', tint: '#f0435a', url: '/pages/pk-lobby/index' },
-  { label: '初始化会话', icon: '🔄', tint: '#64748b', action: 'init' },
+  { label: '刷新会话', icon: '↻', tint: '#64748b', action: 'init' },
 ];
 
 export default function Index() {

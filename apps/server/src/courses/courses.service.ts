@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { CourseLevel, CoursePackDto, CourseDto, SentenceDto, TokenDto } from '@app/shared';
+import { tokenize, type CourseLevel, type CoursePackDto, type CourseDto, type SentenceDto, type TokenDto } from '@app/shared';
+import type { ImportMediaCourseDto } from './dto/courses.dto';
 
 function toLevel(s: string): CourseLevel {
   return (['beginner', 'intermediate', 'advanced'].includes(s)
@@ -11,6 +12,51 @@ function toLevel(s: string): CourseLevel {
 @Injectable()
 export class CoursesService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async importMediaCourse(userId: string, input: ImportMediaCourseDto) {
+    const sentences = input.transcript
+      .split(/\r?\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .flatMap((line) => line.split(/(?<=[.!?])\s+(?=[A-Z])/))
+      .map((line) => {
+        const [text, translation] = line.split(/\s*\|\s*/, 2);
+        return { text: text?.trim() ?? '', translation: translation?.trim() ?? '' };
+      })
+      .filter((line) => line.text.length > 1)
+      .slice(0, 200);
+
+    if (sentences.length === 0) throw new BadRequestException('请至少提供一句英文字幕或歌词');
+
+    const created = await this.prisma.$transaction(async (tx) => {
+      const pack = await tx.coursePack.create({
+        data: {
+          title: input.title.trim(),
+          description: `从你的${input.type === 'music' ? '英文歌' : input.type === 'video' ? '电影片段' : '音频'}导入 · ${sentences.length} 句`,
+          level: 'beginner',
+          tags: '我的导入,逐句学习',
+          coverUrl: '',
+        },
+      });
+      const course = await tx.course.create({
+        data: { coursePackId: pack.id, title: `${input.title.trim()} · 逐句练习`, type: input.type, order: 0 },
+      });
+      await tx.sentence.createMany({
+        data: sentences.map((line, index) => ({
+          courseId: course.id,
+          order: index,
+          text: line.text,
+          translation: line.translation || '点击听原音后，尝试自己说出这句话。',
+          mediaUrl: input.mediaUrl?.trim() || null,
+          tokens: JSON.stringify(tokenize(line.text)),
+        })),
+      });
+      await tx.userCoursePack.create({ data: { userId, coursePackId: pack.id } });
+      await tx.courseProgress.create({ data: { userId, courseId: course.id, mode: 'dictation', sentenceOrder: 0 } });
+      return { packId: pack.id, courseId: course.id, sentenceCount: sentences.length };
+    });
+    return created;
+  }
 
   async list(params: { level?: string; q?: string; page?: number; pageSize?: number; userId?: string }) {
     const page = params.page ?? 1;

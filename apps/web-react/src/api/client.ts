@@ -16,10 +16,7 @@ const OFFLINE_QUEUE_KEY = 'offline_practice_queue';
 
 export interface StoredTokens extends AuthTokens {}
 
-export const API_BASE = (() => {
-  const g = globalThis as { API_BASE?: string };
-  return g.API_BASE ?? 'http://localhost:3000/api/v1';
-})();
+export const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3000/api/v1';
 
 /** 将服务端相对媒体 URL（/api/v1/...）解析为绝对地址 */
 export function resolveMediaUrl(url: string | null | undefined): string {
@@ -150,7 +147,6 @@ export const api = {
     return getPlatformAdapter().network.post(`/review/vocab`, { word }, { headers: authHeaders(tokens) });
   },
   async removeVocab(id: string, tokens: StoredTokens | null) {
-    // DELETE 经 network client 不支持，用 post 到一个删除端点
     return getPlatformAdapter().network.post(`/review/vocab/${id}/delete`, {}, { headers: authHeaders(tokens) });
   },
   async markVocabMastered(id: string, tokens: StoredTokens | null) {

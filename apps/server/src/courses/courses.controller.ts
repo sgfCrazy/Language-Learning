@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CoursesService } from './courses.service';
-import { ListCoursePacksDto } from './dto/courses.dto';
+import { ImportMediaCourseDto, ListCoursePacksDto } from './dto/courses.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -16,6 +16,12 @@ export class CoursesController {
       page: q.page,
       pageSize: q.pageSize,
     });
+  }
+
+  @Post('course-packs/import')
+  @UseGuards(JwtAuthGuard)
+  async importMediaCourse(@Body() body: ImportMediaCourseDto, @CurrentUser() user: { id: string }) {
+    return this.courses.importMediaCourse(user.id, body);
   }
 
   @Get('course-packs/:id')

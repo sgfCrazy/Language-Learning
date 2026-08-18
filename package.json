@@ -9,16 +9,16 @@
   },
   "scripts": {
     "dev:server": "pnpm -F @app/server dev",
-    "dev:web": "pnpm -F @app/web-taro dev:h5",
-    "dev:weapp": "pnpm -F @app/web-taro dev:weapp",
+    "dev:web": "pnpm -F @app/web-react dev",
     "build": "pnpm -r build",
+    "serve:web": "PORT=10086 node apps/web-react/serve.mjs",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "seed": "pnpm -F @app/server seed",
     "db:migrate": "pnpm -F @app/server prisma:migrate",
-    "e2e": "pnpm -F @app/web-taro e2e"
+    "e2e": "pnpm -F @app/web-react e2e"
   },
   "devDependencies": {
     "@types/node": "^22.5.0",
