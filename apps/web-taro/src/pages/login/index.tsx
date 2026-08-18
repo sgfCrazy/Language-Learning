@@ -1,21 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAuthStore } from '../../store/auth';
 
 export default function Login() {
-  const { loginEmail, registerEmail, loginWxMiniapp, loading, error } = useAuthStore();
+  const { loginEmail, registerEmail, loginWxMiniapp, loading, error, clearError } = useAuthStore();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [formError, setFormError] = useState('');
+
+  useEffect(() => {
+    setFormError('');
+    clearError();
+  }, [mode, clearError]);
 
   const submit = async () => {
+    const normalizedEmail = email.trim();
+    const normalizedName = displayName.trim();
+    setFormError('');
     try {
       if (mode === 'login') {
-        await loginEmail(email, password);
+        await loginEmail(normalizedEmail, password);
       } else {
-        await registerEmail(email, password, displayName || `用户${Date.now() % 1000}`);
+        await registerEmail(normalizedEmail, password, normalizedName || `用户${Date.now() % 1000}`);
       }
       Taro.navigateBack();
     } catch {
@@ -24,11 +33,16 @@ export default function Login() {
   };
 
   return (
-    <View className="page-shell" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh' }}>
-      <View style={{ textAlign: 'center', marginTop: '-100rpx' }}>
-        <Text style={{ fontSize: '64rpx' }}>🎓</Text>
-      </View>
-      <View className="auth-card">
+    <View className="page-shell auth-page">
+      <View className="auth-layout">
+        <View className="auth-intro">
+          <View className="auth-mark"><View className="auth-mark-icon">语</View><Text>句乐部 · Language Learning</Text></View>
+          <Text className="auth-intro-title">每天一点点，真的会进步。</Text>
+          <Text className="auth-intro-copy">把英语练习变成轻松、可持续的日常。听、说、拼句，一次只学一个小目标。</Text>
+          <View className="auth-benefit"><View className="auth-benefit-dot" /><Text>10 分钟完成今日学习</Text></View>
+          <View className="auth-benefit"><View className="auth-benefit-dot" /><Text>AI 陪练，随时解释你的疑问</Text></View>
+        </View>
+        <View className="auth-card">
         <Text className="auth-title">{mode === 'login' ? '欢迎回来' : '创建账号'}</Text>
         <Text className="auth-sub">{mode === 'login' ? '登录后继续你的学习之旅' : '30 秒开启高效学习'}</Text>
 
@@ -48,13 +62,11 @@ export default function Login() {
           {loading ? '请稍候…' : mode === 'login' ? '登录' : '注册'}
         </View>
 
-        <View style={{ marginTop: '24rpx', textAlign: 'center' }}>
+        <View className="auth-switch" onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
           <Text
             className="muted"
-            style={{ fontSize: 'var(--font-small)' }}
-            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
           >
-            还没有账号？<Text style={{ color: 'var(--brand-600)', fontWeight: 600 }}>{mode === 'login' ? '去注册' : '去登录'}</Text>
+            {mode === 'login' ? '还没有账号？' : '已经有账号？'}<Text className="auth-switch-link">{mode === 'login' ? '去注册' : '去登录'}</Text>
           </Text>
         </View>
 
@@ -63,13 +75,10 @@ export default function Login() {
           微信一键登录
         </View>
         {/* #endif */}
-      </View>
-
-      {error && (
-        <View style={{ marginTop: '24rpx', textAlign: 'center' }}>
-          <Text style={{ color: 'var(--danger)', fontSize: 'var(--font-small)' }}>{error}</Text>
+        {(formError || error) && <Text className="auth-error">{formError || error}</Text>}
         </View>
-      )}
+
+      </View>
     </View>
   );
 }

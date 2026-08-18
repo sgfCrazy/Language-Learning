@@ -1,25 +1,21 @@
-import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class EmailRegisterDto {
-  @IsEmail()
+  @IsString()
   email!: string;
 
   @IsString()
-  @MinLength(8)
-  @MaxLength(64)
   password!: string;
 
   @IsString()
-  @MaxLength(40)
   displayName!: string;
 }
 
 export class EmailLoginDto {
-  @IsEmail()
+  @IsString()
   email!: string;
 
   @IsString()
-  @MinLength(1)
   password!: string;
 }
 
@@ -35,6 +31,5 @@ export class RefreshDto {
 
 export class WxQrCodeCreateDto {
   @IsString()
-  @MaxLength(64)
   clientId?: string;
 }

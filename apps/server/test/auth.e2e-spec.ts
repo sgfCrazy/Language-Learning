@@ -102,10 +102,11 @@ describe('Auth (e2e)', () => {
     expect(res.body.accessToken).toBeTruthy();
   });
 
-  it('密码强度不足被拒绝', async () => {
+  it('任意格式账号密码均可注册（无格式校验）', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/auth/register/email')
-      .send({ email: uniqueEmail(), password: '123', displayName: 'X' });
-    expect(res.status).toBe(400);
+      .send({ email: 'user+123 abc@x', password: '123', displayName: 'X' });
+    expect(res.status).toBe(201);
+    expect(res.body.accessToken).toBeTruthy();
   });
 });
