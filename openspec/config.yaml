@@ -1,0 +1,65 @@
+schema: spec-driven
+
+context: |
+  产品: 语言学习平台（"句乐部"风格的英语学习应用）。核心玩法是"连词成句"——
+  看中文/听音频，把英文句子一步步拼出来，过程中单词自然重复从而记住。
+  面向中小学生、备考党、上班族、家长等。游戏化（连击/SSS评级/PK/排行榜）是核心体验。
+  需同时覆盖 Web 与微信小程序，并支持音视频/音乐课程的跟读与跟拼。
+
+  技术栈:
+    - 跨端前端: Taro 4 (React 18 + TypeScript)，一套代码编译 Web/H5 与微信小程序
+    - 状态管理: Zustand；数据请求: TanStack Query
+    - 样式: Tailwind（Web）+ Taro 适配小程序的样式方案
+    - 后端: NestJS (Node.js, TypeScript) + Prisma ORM
+    - 数据库: PostgreSQL；缓存/队列: Redis
+    - 实时通信: Socket.io（Web）+ 微信小程序 WebSocket 适配层（PK 对战、在线状态）
+    - AI: 外部 LLM API 接入（OpenAI / 智谱 GLM），用于 AI 助手与课程制作的拆句/音标/知识点生成
+    - 对象存储: 阿里云 OSS 或腾讯云 COS，存放音视频/音频/图片
+    - 音视频播放: Web 用 HTML5 video/audio；小程序用 video/audio 组件；跟读录音用 Web Audio API / 小程序 RecorderManager
+    - 认证: 微信登录（小程序 wx.login + Web 微信扫码）为主，邮箱密码为辅；JWT
+    - 部署: Web（Vercel/自有服务器）+ 小程序（微信平台）+ 后端（Docker，自有服务器）
+
+  约定:
+    - Conventional Commits（feat/fix/docs/refactor/test/chore）
+    - 代码风格: ESLint + Prettier；TypeScript strict
+    - 测试: 后端 Jest + supertest；前端 Vitest；E2E Playwright（Web）
+    - 目录结构: monorepo (pnpm workspaces)
+        apps/web-taro   跨端应用（Web/H5 + 微信小程序）
+        apps/server     NestJS 后端
+        packages/shared 共享类型与工具（Taro 与 Node 共用）
+        packages/ui     共享组件
+    - 多端差异: 严禁使用小程序不支持的浏览器 API；通过适配层封装（packages/shared/platform）
+
+  能力域（capability path，用于 specs/ 目录）:
+    - user-auth               账号与登录
+    - practice-engine         连词成句练习引擎（中译英/听写/听力/口语/视频跟练）
+    - course-catalog          课程包与商城
+    - review-system           复习系统（复习本/生词本/掌握列表 + 动态间隔复习）
+    - gamification            游戏化（连击/SSS评级/金币/每日任务/排行榜）
+    - pk-battles              PK 实时对战
+    - ai-assistant            AI 智能助手
+    - media-courses           音频/视频/音乐课程与跟读跟拼
+    - progress-tracking       成长记录与学习分析
+    - course-editor           编辑端做课程（二期）
+
+rules:
+  proposal:
+    - 必须包含 "Why" 与 "Non-goals" 两节
+    - 每个 proposal 控制在 600 字以内
+    - 必须指明影响的 capability path
+  tasks:
+    - 每个 task 拆分到 2 小时以内可完成
+    - 必须标注端侧（web / miniapp / server / shared）与验收方式
+  specs:
+    - 用 SHALL / SHOULD / MUST 表述需求强度
+    - 每条需求带唯一 ID（如 PE-001）
+    - 明确多端行为差异（Web vs 微信小程序）
+
+operations:
+  apply:
+    guidance:
+      - 实现时优先打通端到端最小路径，再补全边角
+      - 涉及小程序的代码必须用平台适配层，禁止直接调用浏览器 API
+  archive:
+    guidance:
+      - 归档时把 change 的 spec delta 合并进主 spec，并更新 tasks 完成状态

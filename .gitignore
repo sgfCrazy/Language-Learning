@@ -1,0 +1,39 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# build
+dist/
+build/
+.taro/
+.next/
+*.tsbuildinfo
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# mini-program build output
+miniDist/
+
+# prisma
+apps/server/prisma/migrations/dev.db*
+
+# test coverage
+coverage/
+
+# openspec local
+openspec/.local/
