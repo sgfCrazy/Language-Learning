@@ -29,6 +29,7 @@ model User {
   vocab       UserVocab[]
   coins       CoinTransaction[]
   dailyTasks  DailyTask[]
+  aiLogs      AiAskLog[]
 
   @@index([email])
 }
@@ -212,4 +213,19 @@ model UserVocab {
 
   @@unique([userId, word])
   @@index([userId, status])
+}
+
+model AiAskLog {
+  id        String   @id @default(cuid())
+  userId    String
+  question  String
+  context   String   @default("") // 句子原文/词块（JSON）
+  answer    String   @default("")
+  mode      String   // "free" | "billed"
+  billedCoins Int    @default(0)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }

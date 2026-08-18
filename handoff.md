@@ -183,6 +183,40 @@ webpackChain(chain) {
 
 ---
 
+### v0.2.0-gamification — 2026-08-18
+
+**目标**：GamePlay 外壳 —— 金币经济 + 连击 + 排行榜 + 每日任务，提升练习参与度。
+
+**OpenSpec 提案**：`openspec/changes/gamification/`，已归档为 `2026-08-18-gamification`。
+
+**已落地的能力域**
+| 能力 | 后端 | 前端 | 测试 |
+| --- | --- | --- | --- |
+| gamification | ✅ CoinTransaction + DailyTask 表、练习结算发币（首答成功加成、连击加成、评级加成）、任务进度（练习次数/金币/连击/时长/完成任务）、排行榜（日/周/月，仅完成 ≥5 题的活跃用户） | ✅ 练习页连击计数器、任务中心页、排行榜页 | ✅ gamification e2e 5 例（server 23/23） |
+
+**关键提交**：`ea9f6d5`（gamification capability）。
+
+---
+
+### v0.3.0-review-system — 2026-08-18
+
+**目标**：间隔重复复习 —— 生词本 + 每日复习本 + SM-2 调度，让词汇从"认识"走向"掌握"。
+
+**OpenSpec 提案**：`openspec/changes/review-system/`，已归档为 `2026-08-18-review-system`。
+
+**已落地的能力域**
+| 能力 | 后端 | 前端 | 测试 |
+| --- | --- | --- | --- |
+| review-system | ✅ SM-2 纯函数（shared/review.ts）；ReviewModule：生词本 CRUD + 掌握/取消 + 每日复习推荐（答错句子 + 到期词）；ProgressService 结算后自动喂给调度器 | ✅ 练习页"标记生词"、复习本页（当日到期 + 一键进练习）、生词本页（添加/删除/移入掌握） | ✅ shared 7 单测 + review e2e 5 例（server 28/28） |
+
+**关键提交**：`5520bad`（review system capability + 归档 review-system + 同步主 spec）。
+
+**沿途踩坑**（新增）
+- #14 review controller 里同路由同时挂 `@Delete` 与 `@Post` 别名：前端 network client 不支持 DELETE，用 `/`:id`/delete` POST 别名兜底，两者都挂同一 handler。
+- #15 TS4053：`GrowthRow` 未导出导致 controller 返回类型无法命名 —— 改成 `export interface GrowthRow`。
+
+---
+
 ## 待实施的 OpenSpec Changes（设计已就绪，未实现）
 
 | Change | proposal | spec delta | design/tasks | 说明 |

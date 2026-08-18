@@ -46,6 +46,15 @@ export class GamificationService {
     return balanceAfter;
   }
 
+  /** 扣除用户金币（原子操作），返回新余额。余额不足抛错 */
+  async spendCoins(userId: string, amount: number, source: string, refId?: string): Promise<number> {
+    const balance = await this.getBalance(userId);
+    if (balance < amount) {
+      throw new Error(`INSUFFICIENT_COINS: need ${amount}, has ${balance}`);
+    }
+    return this.addCoins(userId, -amount, source, refId);
+  }
+
   async getCoinHistory(userId: string, page = 1, pageSize = 20) {
     const [items, total] = await Promise.all([
       this.prisma.coinTransaction.findMany({

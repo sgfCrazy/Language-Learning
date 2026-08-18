@@ -1,3 +1,42 @@
 page {
   background: #f7f7f7;
 }
+
+.ai-panel {
+  margin: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+.ai-title {
+  font-size: 13px;
+  color: #888;
+  display: block;
+  margin-bottom: 8px;
+}
+.ai-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ai-input-row Input {
+  flex: 1;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+.ai-answer {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+}
+.ai-error {
+  display: block;
+  margin-top: 8px;
+  color: #e64340;
+  font-size: 13px;
+}

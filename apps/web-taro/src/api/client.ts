@@ -141,6 +141,12 @@ export const api = {
   async markVocabMastered(id: string, tokens: StoredTokens | null) {
     return getPlatformAdapter().network.post(`/review/vocab/${id}/master`, {}, { headers: authHeaders(tokens) });
   },
+  async getAiQuota(tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.get<{ freeUsed: number; freeLimit: number; balance: number }>(`/ai/quota`, { headers: authHeaders(tokens) });
+  },
+  async askAi(body: { question: string; context: { text: string; translation: string; tokens: { text: string; isPunctuation: boolean }[] } }, tokens: StoredTokens | null) {
+    return getPlatformAdapter().network.post<{ answer: string; mode: 'free' | 'billed'; billedCoins: number; quota: { freeUsed: number; freeLimit: number; balance: number } }>(`/ai/ask`, body, { headers: authHeaders(tokens) });
+  },
   async heatmap(tokens: StoredTokens | null) {
     return getPlatformAdapter().network.get<{ items: unknown[] }>(`/progress/heatmap`, { headers: authHeaders(tokens) });
   },

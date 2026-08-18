@@ -7,6 +7,7 @@ import { CoursesModule } from './courses/courses.module';
 import { ProgressModule } from './progress/progress.module';
 import { GamificationModule } from './gamification/gamification.module';
 import { ReviewModule } from './review/review.module';
+import { AiAssistantModule } from './ai/ai-assistant.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ReviewModule } from './review/review.module';
     CoursesModule,
     GamificationModule,
     ReviewModule,
+    AiAssistantModule,
     ProgressModule,
   ],
 })

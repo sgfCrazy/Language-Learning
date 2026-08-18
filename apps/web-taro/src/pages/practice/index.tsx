@@ -6,6 +6,7 @@ import type { SentenceDto, SoundName } from '@app/shared';
 import { PracticeMode, getPlatformAdapter, scoreSentence, rateByScoreRate } from '@app/shared';
 import { api } from '../../api/client';
 import { useAuthStore } from '../../store/auth';
+import AiAssistantPanel from '../../components/AiAssistantPanel';
 
 /**
  * 连词成句练习（中译英模式）。
@@ -199,6 +200,13 @@ export default function Practice() {
       <Text className="meta">
         第 {idx + 1}/{sentences.length} 句 · 步骤 {step + 1}/{tokensArr.length} · 最高连击 {maxCombo}
       </Text>
+      <AiAssistantPanel
+        context={{
+          text: current.text,
+          translation: current.translation,
+          tokens: current.tokens.map((t) => ({ text: t.text, isPunctuation: t.isPunctuation })),
+        }}
+      />
     </View>
   );
 }
