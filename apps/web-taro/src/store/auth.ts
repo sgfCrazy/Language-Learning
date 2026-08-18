@@ -25,6 +25,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       try {
         const me = await api.me(stored);
         set({ tokens: stored, userId: me.id });
+        // 联网后补传离线队列
+        api.flushOffline(stored).catch(() => undefined);
       } catch {
         // access token 可能过期，尝试 refresh
         try {
@@ -32,6 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           await saveTokens(refreshed);
           const me = await api.me(refreshed);
           set({ tokens: refreshed, userId: me.id });
+          api.flushOffline(refreshed).catch(() => undefined);
         } catch {
           await clearTokens();
           set({ tokens: null, userId: null });

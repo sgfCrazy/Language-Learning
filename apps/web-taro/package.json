@@ -10,7 +10,8 @@
     "build:weapp": "taro build --type weapp",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "e2e": "echo \"E2E (Playwright) 待接入\" && exit 0"
+    "e2e": "playwright test",
+    "e2e:install": "playwright install chromium"
   },
   "browserslist": [
     "defaults and fully supports es6-module",
@@ -39,6 +40,7 @@
     "@babel/preset-env": "^8.0.2",
     "@babel/preset-react": "^8.0.1",
     "@babel/preset-typescript": "^8.0.1",
+    "@playwright/test": "^1.62.1",
     "@tarojs/cli": "4.0.9",
     "@tarojs/taro-loader": "4.0.9",
     "@tarojs/webpack5-runner": "4.0.9",

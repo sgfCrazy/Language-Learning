@@ -13,5 +13,5 @@
     },
     "noEmit": true
   },
-  "include": ["src/**/*", "config/**/*", "vitest.config.ts"]
+  "include": ["src/**/*", "config/**/*", "vitest.config.ts", "playwright.config.ts", "e2e/**/*"]
 }

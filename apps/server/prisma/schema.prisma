@@ -148,7 +148,7 @@ model PracticeRecord {
   durationMs     Int
   attempts       Int
   score          Int
-  clientTimestamp Int     // 客户端时间戳（ms），用于离线补传去重
+  clientTimestamp BigInt  // 客户端时间戳（ms），用于离线补传去重
   createdAt      DateTime @default(now())
 
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
